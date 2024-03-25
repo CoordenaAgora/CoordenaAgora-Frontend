@@ -47,7 +47,7 @@
       </Card>
     </div>
     <div class="hidden md:block md:w-1/2">
-      <Image src="src\assets\imagem-login.png" alt="Image" class="imagem" />
+      <Image src="\imagem-login.png" alt="Image" class="imagem" />
     </div>
   </div>
 </template>
