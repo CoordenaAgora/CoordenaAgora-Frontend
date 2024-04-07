@@ -26,6 +26,7 @@
             :feedback="false" 
             toggleMask 
             placeholder="Digite sua senha..." 
+            v-on:keyup.enter="entrar"
           />
           <div class="acoes-senha">
             <div class="flex items-center">
