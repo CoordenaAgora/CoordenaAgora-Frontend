@@ -1,8 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/components/Login.vue'
+import RedefinirSenha from '@/components/RedefinirSenha.vue'
 import Dashboard from '@/paginas/Dashboard.vue'
 import Configuracoes from '@/paginas/Configuracoes.vue'
 import Pessoas from '@/paginas/Pessoas.vue'
+import Indicadores from '@/paginas/Indicadores.vue'
+import AdicionarIndicador from '@/paginas/AdicionarIndicador.vue'
 import Conversas from '@/paginas/Conversas.vue'
 import Relatorios from '@/paginas/Relatorios.vue'
 import AdicionarScript from '@/paginas/AdicionarScript.vue'
@@ -18,6 +21,11 @@ const router = createRouter({
       path: '/',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/redefinir-senha',
+      name: 'redefinir-senha',
+      component: RedefinirSenha
     },
     {
       path: '/dashboard',
@@ -58,6 +66,16 @@ const router = createRouter({
       path: '/adicionar-setor',
       name: 'adicionar-setor',
       component: AdicionarSetor
+    },
+    {
+      path: '/indicadores',
+      name: 'indicadores',
+      component: Indicadores
+    },
+    {
+      path: '/adicionar-indicador',
+      name: 'adicionar-indicador',
+      component: AdicionarIndicador
     },
     {
       path: '/conversas',

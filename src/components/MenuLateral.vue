@@ -38,7 +38,7 @@
                     </router-link>
                 </li>
 
-                <li id="pessoas" class="side-item" @click="selecionarItem('pessoas')">
+                <li id="pessoas" class="side-item">
                     <router-link to="/pessoas-setores">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
                             <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6m-5.784 6A2.24 2.24 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.3 6.3 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1zM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5"/>
@@ -49,7 +49,16 @@
                     </router-link>
                 </li>
 
-                <li id="conversas" class="side-item" @click="selecionarItem('conversas')">
+                <li id="indicadores" class="side-item">
+                    <router-link to="/indicadores">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><title>list-box-outline</title><path d="M11 15H17V17H11V15M9 7H7V9H9V7M11 13H17V11H11V13M11 9H17V7H11V9M9 11H7V13H9V11M21 5V19C21 20.1 20.1 21 19 21H5C3.9 21 3 20.1 3 19V5C3 3.9 3.9 3 5 3H19C20.1 3 21 3.9 21 5M19 5H5V19H19V5M9 15H7V17H9V15Z" /></svg>
+                        <span class="item-description">
+                            Indicadores
+                        </span>
+                    </router-link>
+                </li>
+
+                <li id="conversas" class="side-item">
                     <router-link to="/conversas">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat" viewBox="0 0 16 16">
                             <path d="M2.678 11.894a1 1 0 0 1 .287.801 11 11 0 0 1-.398 2c1.395-.323 2.247-.697 2.634-.893a1 1 0 0 1 .71-.074A8 8 0 0 0 8 14c3.996 0 7-2.807 7-6s-3.004-6-7-6-7 2.808-7 6c0 1.468.617 2.83 1.678 3.894m-.493 3.905a22 22 0 0 1-.713.129c-.2.032-.352-.176-.273-.362a10 10 0 0 0 .244-.637l.003-.01c.248-.72.45-1.548.524-2.319C.743 11.37 0 9.76 0 8c0-3.866 3.582-7 8-7s8 3.134 8 7-3.582 7-8 7a9 9 0 0 1-2.347-.306c-.52.263-1.639.742-3.468 1.105"/>
@@ -60,7 +69,7 @@
                     </router-link>
                 </li>
 
-                <li id="relatorios" class="side-item" @click="selecionarItem('relatorios')">
+                <li id="relatorios" class="side-item">
                     <router-link to="/relatorios">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark" viewBox="0 0 16 16">
                             <path d="M14 4.5V14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h5.5zm-3 0A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5z"/>
@@ -78,12 +87,14 @@
         </div>
 
         <div id="logout">
-            <button id="logout_btn">
-                <i class="fa-solid fa-right-from-bracket"></i>
-                <span class="item-description">
-                    Sair
-                </span>
-            </button>
+            <router-link to="/">
+                <button id="logout_btn">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span class="item-description">
+                        Sair
+                    </span>
+                </button>
+            </router-link>
         </div>
     </nav>
 </template>
@@ -126,6 +137,7 @@ export default {
             document.getElementById('conversas').classList.remove('active');
             document.getElementById('relatorios').classList.remove('active');
             document.getElementById('turmas').classList.remove('active');
+            document.getElementById('indicadores').classList.remove('active');
         }
 
 

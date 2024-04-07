@@ -17,7 +17,7 @@
             </div>
             <div class="m-4 p-4 shadow-1	">
                 <DataTable :value="pessoas" tableStyle="min-width: 50rem">
-                    <Column field="nome" header="Nome do script">
+                    <Column field="nome" header="Nome da pessoa">
                         <template #editor="{ data, field }">
                             <InputText v-model="data[field]" />
                         </template>

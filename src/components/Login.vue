@@ -1,56 +1,40 @@
 <template>
-  <div class="flex flex-col md:flex-row">
+<div class="flex flex-col md:flex-row">
     <div id="container" class="w-full md:w-1/2">
-      <Card class="card">
-        <template #title>Bem vindo!</template>
-        <template #content>
-          <h1>Login</h1>
-          <p class="m-0">
-            Faça seu login para entrar na solução CoordenaAgora
-          </p>
-          <div class="mt-5 mb-2">
-            <label>Usuário</label>
-          </div>
-          <div>
-            <InputText 
-              id="usuario" 
-              v-model="usuario"
-              placeholder="Digite seu usuário..." 
-            />
-          </div>
-          <div class="mt-4 mb-2">
-            <label>Senha</label>
-          </div>
-          <Password 
-            v-model="senha" 
-            :feedback="false" 
-            toggleMask 
-            placeholder="Digite sua senha..." 
-            v-on:keyup.enter="entrar"
-          />
-          <div class="acoes-senha">
-            <div class="flex items-center">
-              <Checkbox v-model="lembrarSenha" :binary="true" />
-              <label class="ml-1">Lembrar-me</label>
-            </div>
-            <a href="www.google.com">Esqueceu sua senha?</a>
-          </div>
-          <label 
-            class="senha-incorreta" 
-            v-if="usuarioSenhaIncorretos">
-          Usuário ou senha incorretos</label>
-          <Button 
-            class="w-full mt-6 botao-entrar" 
-            label="Entrar" 
-            @click="entrar" 
-          />
-        </template>
-      </Card>
+        <Card class="card">
+            <template #title>Bem vindo!</template>
+            <template #content>
+                <h1>Login</h1>
+                <p class="m-0">
+                    Faça seu login para entrar na solução CoordenaAgora
+                </p>
+                <div class="mt-5 mb-2">
+                    <label>Usuário</label>
+                </div>
+                <div>
+                    <InputText id="usuario" v-model="usuario" placeholder="Digite seu usuário..." />
+                </div>
+                <div class="mt-4 mb-2">
+                    <label>Senha</label>
+                </div>
+                <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite sua senha..." v-on:keyup.enter="entrar" />
+                <div class="acoes-senha">
+                    <div class="flex items-center">
+                        <Checkbox v-model="lembrarSenha" :binary="true" />
+                        <label class="ml-1">Lembrar-me</label>
+                    </div>
+                    <router-link to="/redefinir-senha">Redefinir senha</router-link>
+                </div>
+                <label class="senha-incorreta" v-if="usuarioSenhaIncorretos">
+                    Usuário ou senha incorretos</label>
+                <Button class="w-full mt-6 botao-entrar" label="Entrar" @click="entrar" />
+            </template>
+        </Card>
     </div>
     <div class="hidden md:block md:w-1/2">
-      <Image src="\imagem-login.png" alt="Image" class="imagem" />
+        <Image src="\imagem-login.png" alt="Image" class="imagem" />
     </div>
-  </div>
+</div>
 </template>
 
 <script>
@@ -60,152 +44,163 @@ import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
+import api from "@/plugins/axios";
 
 export default {
-  components: {
-    Card,
-    Image,
-    InputText,
-    Password,
-    Checkbox,
-    Button
-  },
-  data() {
-    return {
-      usuario: null,
-      senha: null,
-      lembrarSenha: false,
-      usuarioSenhaIncorretos: false
-    };
-  },
-  methods: {
-    entrar(){
-      if(this.usuario != "root" && this.senha != 123){
-        this.usuarioSenhaIncorretos = true;
-      } else {
-        this.usuarioSenhaIncorretos = false;
-        this.$router.push('/dashboard')
-      }
+    components: {
+        Card,
+        Image,
+        InputText,
+        Password,
+        Checkbox,
+        Button
+    },
+    data() {
+        return {
+            usuario: null,
+            senha: null,
+            lembrarSenha: false,
+            usuarioSenhaIncorretos: false
+        };
+    },
+    methods: {
+        entrar() {
+            // if(this.usuario != "root" && this.senha != 123){
+            //   this.usuarioSenhaIncorretos = true;
+            // } else {
+            //   this.usuarioSenhaIncorretos = false;
+            //   this.$router.push('/dashboard')
+            // }
+            api({
+                method: "get",
+                url: "http://localhost:3000/usuarios",
+            }).then(response => {
+                const usuarios = response.data;
+                const usuarioEncontrado = usuarios.find((elemento) => elemento.nome === this.usuario && elemento.senha === this.senha)
+                if (!usuarioEncontrado) {
+                    this.usuarioSenhaIncorretos = true;
+                } else {
+                    this.usuarioSenhaIncorretos = false;
+                    this.$router.push('/dashboard')
+                }
+            });
+        }
     }
-  }
 }
 </script>
 
 <style scoped>
 .card {
-  margin-top: 5rem;
-  overflow: hidden;
-  padding: 15px;
-  width: fit-content;
-  margin: 10%;
-  margin-left: 10%;
-  margin-top: 15%;
-}
-
-.imagem {
-  max-width: 70%;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  align-content: stretch;
-  justify-content: space-evenly;
-  align-items: stretch;
-  margin-top: 8%;
-  margin-left: 5%;
-}
-
-#usuario {
-  width: 100% !important;
-}
-
-.botao-entrar{
-  box-shadow: 0px 10px 40px -12px #45A8BF; 
-  background-color: #45A8BF;
-  border-color: #45A8BF;
-}
-
-.acoes-senha{
-  display: flex !important; justify-content: space-between; margin-top: 20px;
-}
-
-.senha-incorreta{
-  color: red;
-  margin-top: 30px;
-  justify-content: center;
-  display: flex;
-}
-
-
-@media only screen and (max-width: 500px) {
-  .card {
-    width: auto;
-    margin: 10%;
-    margin-top: 30%;
-    padding: 15px;
-  }
-
-  #usuario {
-    width: 108% !important;
-  }
-}
-
-
-@media only screen and (max-width: 2000) {
-  .card {
     margin-top: 5rem;
     overflow: hidden;
     padding: 15px;
     width: fit-content;
     margin: 10%;
-    margin-left: 20%;
-    margin-top: 20%;
-  }
+    margin-left: 10%;
+    margin-top: 15%;
+}
 
-  .imagem {
-    max-width: 50%;
+.imagem {
+    max-width: 70%;
     height: auto;
     display: flex;
     flex-direction: column;
     align-content: stretch;
     justify-content: space-evenly;
     align-items: stretch;
-    margin-top: 10%;
-    margin-left: 15%;
-  }
+    margin-top: 8%;
+    margin-left: 5%;
+}
 
-  #usuario {
-    padding: 15px;
-    width: 80% !important;
-    align-content: stretch;
-  }
+#usuario {
+    width: 100% !important;
+}
 
-  #app{
-    overflow: hidden;
-  }
+.botao-entrar {
+    box-shadow: 0px 10px 40px -12px #45A8BF;
+    background-color: #45A8BF;
+    border-color: #45A8BF;
+}
+
+.acoes-senha {
+    display: flex !important;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.senha-incorreta {
+    color: red;
+    margin-top: 30px;
+    justify-content: center;
+    display: flex;
+}
+
+@media only screen and (max-width: 500px) {
+    .card {
+        width: auto;
+        margin: 10%;
+        margin-top: 30%;
+        padding: 15px;
+    }
+
+    #usuario {
+        width: 108% !important;
+    }
+}
+
+@media only screen and (max-width: 2000) {
+    .card {
+        margin-top: 5rem;
+        overflow: hidden;
+        padding: 15px;
+        width: fit-content;
+        margin: 10%;
+        margin-left: 20%;
+        margin-top: 20%;
+    }
+
+    .imagem {
+        max-width: 50%;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-content: stretch;
+        justify-content: space-evenly;
+        align-items: stretch;
+        margin-top: 10%;
+        margin-left: 15%;
+    }
+
+    #usuario {
+        padding: 15px;
+        width: 80% !important;
+        align-content: stretch;
+    }
+
+    #app {
+        overflow: hidden;
+    }
 
 }
 
-
-
 @media only screen and (min-width: 2000px) {
-  .card {
-    margin-top: 5rem;
-    overflow: hidden;
-    padding: 15px;
-    width: fit-content;
-    margin: 20%;
-    margin-left: 20%;
-    margin-top: 15%;
-  }
+    .card {
+        margin-top: 5rem;
+        overflow: hidden;
+        padding: 15px;
+        width: fit-content;
+        margin: 20%;
+        margin-left: 20%;
+        margin-top: 15%;
+    }
 
-  #usuario {
-    width: 68% !important;
-  }
+    #usuario {
+        width: 68% !important;
+    }
 
-  #container{
-    overflow: hidden;
-  }
-
+    #container {
+        overflow: hidden;
+    }
 
 }
 </style>

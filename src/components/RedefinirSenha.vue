@@ -1,0 +1,146 @@
+<template>
+<div class="flex justify-content-center">
+    <img src="/logo-e-nome.png" alt="Logo">
+</div>
+
+<div v-if="inputEmail" class="flex flex-column justify-content-center m-6">
+    <label class="titulo">Redefinir senha</label>
+    <label class="subtitulo" for="">Informe um email e enviaremos um código de 8 dígitos para
+        alterar sua senha</label>
+    <InputText class="email" v-model="email" placeholder="Digite seu e-mail..." />
+    <Button class="botao-enviar" label="Enviar" @click="enviar" />
+</div>
+
+<div v-if="inputCodigo" class="flex flex-column justify-content-center m-6">
+    <label class="titulo">Redefinir senha</label>
+    <label class="subtitulo" for="">Digite o código recebido através do e-mail</label>
+    <InputText class="email" v-model="codigo" placeholder="Digite o código..." />
+    <Button class="botao-enviar" label="Verificar" @click="verificar" />
+</div>
+
+<div v-if="inputNovaSenha" class="flex flex-column justify-content-center m-6">
+    <label class="titulo">Digite sua nova senha</label>
+    <div class="flex flex-column">
+        <label class="campo">Senha</label>
+        <div class="senha">
+            <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite sua senha..." />
+        </div>
+    </div>
+
+    <div class="flex flex-column">
+        <label class="campo">Confirmar senha</label>
+        <div class="senha">
+            <Password v-model="confirmarSenha" :feedback="false" toggleMask placeholder="Confirme sua senha..." />
+        </div>
+    </div>
+    <Button class="botao-enviar" label="Verificar" @click="verificar" />
+</div>
+</template>
+
+<script>
+import Button from 'primevue/button';
+import InputText from 'primevue/inputtext';
+import Password from 'primevue/password';
+
+export default {
+    components: {
+        Button,
+        InputText,
+        Password
+    },
+    props: [],
+    data() {
+        return {
+            inputEmail: true,
+            inputCodigo: false,
+            inputNovaSenha: false,
+            senha: null,
+
+        };
+    },
+    methods: {
+
+        enviar() {
+            this.inputEmail = false;
+            this.inputCodigo = true;
+        },
+        verificar() {
+            this.inputCodigo = false;
+            this.inputNovaSenha = true;
+        }
+
+    },
+    computed: {
+
+    },
+    mounted() {
+
+    }
+
+}
+</script>
+
+<style>
+.botao-enviar {
+    box-shadow: 0px 10px 40px -12px #45A8BF;
+    background-color: #45A8BF;
+    border-color: #45A8BF;
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    margin-left: 25%;
+    margin-top: 2rem;
+}
+
+.titulo {
+    font-size: 48px;
+    font: 'Poppins';
+    display: flex;
+    justify-content: center;
+    color: #292F47;
+    margin: 2rem;
+
+}
+
+.subtitulo {
+    font-size: 16px;
+    display: flex;
+    justify-content: center;
+    color: #292F47;
+    margin-bottom: 2rem;
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 24px;
+    text-align: center;
+    color: #292F47;
+    opacity: 0.7;
+    width: 40%;
+    margin-left: 30%;
+
+}
+
+.email {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    margin-left: 25%;
+}
+
+.senha {
+    width: 50%;
+    display: flex;
+    justify-content: center;
+    margin-left: 25%;
+}
+
+.campo{
+    margin-top: 2rem;
+    display: flex;
+    justify-content: start;
+    width: 50%;
+    margin-left: 38.5%;
+    
+}
+</style>

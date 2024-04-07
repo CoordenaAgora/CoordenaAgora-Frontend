@@ -27,3 +27,10 @@ npm run dev
 ```sh
 npm run build
 ```
+
+
+### Rodar JSON SERVER
+
+```sh
+npx json-server db.json
+```
