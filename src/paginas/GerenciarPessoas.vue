@@ -53,6 +53,8 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';                   // optional
+import api from "@/plugins/axios";
+
 
 
 
@@ -101,7 +103,17 @@ export default {
 
     },
     mounted() {
-        document.getElementById('configuracoes').classList.toggle('active');
+        document.getElementById('pessoas').classList.toggle('active');
+
+        api({
+            method: "get",
+            url: "http://127.0.0.1:8000/api/pessoas",
+            
+        }).then(response => {
+            console.log(response);
+            this.pessoas = response.data;
+        }).catch(erro => {
+        });
     }
 
 }

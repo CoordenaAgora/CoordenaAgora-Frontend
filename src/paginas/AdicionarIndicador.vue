@@ -5,19 +5,19 @@
 
         <div id="container">
             <div class="flex justify-content-end">
-                <Button id="botao"  label="Salvar" />
+                <Button id="botao"  label="Salvar" @click="salvarIndicador"/>
             </div>
 
             <div class="field">
                 <label for="firstname1">Nome do indicador
                 </label>
-                <InputText type="text" v-model="value"
+                <InputText type="text" v-model="nome"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
                 </InputText>
             </div>
             <div class="field">
                 <label for="lastname1">Descrição do indicador</label>
-                <Textarea v-model="value"
+                <Textarea v-model="descricao"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                     rows="5" cols="30" />
             </div>
@@ -42,6 +42,7 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';
 import Textarea from 'primevue/textarea';
+import api from "@/plugins/axios";
 
 
 
@@ -69,7 +70,18 @@ export default {
         };
     },
     methods: {
-
+        salvarIndicador(){
+            api({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/cadastrar-indicador",
+                data: {
+                    nome: this.nome,
+                    descricao: this.descricao,
+                },
+            }).then(response => {
+                this.$router.push('/indicadores')
+            }).catch(erro => {});
+        }
 
 
     },

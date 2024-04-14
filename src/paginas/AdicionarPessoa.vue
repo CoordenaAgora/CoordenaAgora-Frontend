@@ -5,19 +5,19 @@
 
         <div id="container">
             <div class="flex justify-content-end">
-                <Button id="botao"  label="Salvar" />
+                <Button id="botao"  label="Salvar" @click="salvarPessoa"/>
             </div>
 
             <div class="field">
                 <label for="firstname1">Nome da pessoa
                 </label>
-                <InputText type="text" v-model="value"
+                <InputText type="text" v-model="nome"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
                 </InputText>
             </div>
             <div class="field">
                 <label for="lastname1">E-mail</label>
-                <InputText v-model="value"
+                <InputText v-model="email"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                     rows="5" cols="30" />
             </div>
@@ -42,6 +42,7 @@ import Column from 'primevue/column';
 import ColumnGroup from 'primevue/columngroup';   // optional
 import Row from 'primevue/row';
 import Textarea from 'primevue/textarea';
+import api from "@/plugins/axios";
 
 
 
@@ -64,20 +65,30 @@ export default {
     props: [],
     data() {
         return {
-            nome: null
+            nome: null,
+            email: null
 
         };
     },
     methods: {
-
-
-
+        salvarPessoa(){
+            api({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/cadastrar-pessoa",
+                data: {
+                    nome: this.nome,
+                    email: this.email,
+                },
+            }).then(response => {
+                this.$router.push('/pessoas')
+            }).catch(erro => {});
+        }
     },
     computed: {
 
     },
     mounted() {
-        document.getElementById('configuracoes').classList.toggle('active');
+        document.getElementById('pessoas').classList.toggle('active');
     }
 
 }
