@@ -65,24 +65,23 @@ export default {
     },
     methods: {
         entrar() {
-            // if(this.usuario != "root" && this.senha != 123){
-            //   this.usuarioSenhaIncorretos = true;
-            // } else {
-            //   this.usuarioSenhaIncorretos = false;
-            //   this.$router.push('/dashboard')
-            // }
             api({
-                method: "get",
-                url: "http://localhost:3000/usuarios",
+                method: "post",
+                url: "http://127.0.0.1:8000/login/",
+                data: {
+                    usuario: this.usuario,
+                    senha: this.senha,
+                },
             }).then(response => {
-                const usuarios = response.data;
-                const usuarioEncontrado = usuarios.find((elemento) => elemento.nome === this.usuario && elemento.senha === this.senha)
-                if (!usuarioEncontrado) {
+                const autorizado = response.data.resultado;
+                if (!autorizado) {
                     this.usuarioSenhaIncorretos = true;
                 } else {
                     this.usuarioSenhaIncorretos = false;
                     this.$router.push('/dashboard')
                 }
+            }).catch(erro => {
+                this.usuarioSenhaIncorretos = true;
             });
         }
     }
