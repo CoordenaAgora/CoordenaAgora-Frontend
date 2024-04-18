@@ -2,17 +2,21 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Login from '@/components/Login.vue'
 import RedefinirSenha from '@/components/RedefinirSenha.vue'
 import Dashboard from '@/paginas/Dashboard.vue'
-import Configuracoes from '@/paginas/Configuracoes.vue'
-import Pessoas from '@/paginas/Pessoas.vue'
-import Indicadores from '@/paginas/Indicadores.vue'
-import AdicionarIndicador from '@/paginas/AdicionarIndicador.vue'
+import Configuracoes from '@/paginas/script/Configuracoes.vue'
+import PessoasESetores from '@/paginas/PessoasESetores.vue'
+import Indicadores from '@/paginas/indicador/Indicadores.vue'
+import AdicionarIndicador from '@/paginas/indicador/AdicionarIndicador.vue'
 import Conversas from '@/paginas/Conversas.vue'
 import Relatorios from '@/paginas/Relatorios.vue'
-import AdicionarScript from '@/paginas/AdicionarScript.vue'
-import AdicionarPessoa from '@/paginas/AdicionarPessoa.vue'
-import AdicionarSetor from '@/paginas/AdicionarSetor.vue'
-import GerenciarPessoas from '@/paginas/GerenciarPessoas.vue'
-import GerenciarSetores from '@/paginas/GerenciarSetores.vue'
+import AdicionarScript from '@/paginas/script/AdicionarScript.vue'
+import EditarScript from '@/paginas/script/EditarScript.vue'
+import AdicionarPessoa from '@/paginas/pessoa/AdicionarPessoa.vue'
+import AdicionarSetor from '@/paginas/setor/AdicionarSetor.vue'
+import GerenciarPessoas from '@/paginas/pessoa/GerenciarPessoas.vue'
+import GerenciarSetores from '@/paginas/setor/GerenciarSetores.vue'
+import EditarSetor from '@/paginas/setor/EditarSetor.vue'
+import EditarPessoa from '@/paginas/pessoa/EditarPessoa.vue'
+import EditarIndicador from '@/paginas/indicador/EditarIndicador.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -40,12 +44,17 @@ const router = createRouter({
     {
       path: '/adicionar-script',
       name: 'adicionarScript',
-      component: AdicionarScript
+      component: AdicionarScript,
+    },
+    {
+      path: '/editar-script/:id/:nome/:descricao',
+      name: 'editarScript',
+      component: EditarScript
     },
     {
       path: '/pessoas-setores',
       name: 'pessoas-setores',
-      component: Pessoas
+      component: PessoasESetores
     },
     {
       path: '/pessoas',
@@ -58,6 +67,11 @@ const router = createRouter({
       component: AdicionarPessoa
     },
     {
+      path: '/editar-pessoa/:id/:nome/:email',
+      name: 'editarPessoa',
+      component: EditarPessoa
+    },
+    {
       path: '/setores',
       name: 'setores',
       component: GerenciarSetores
@@ -68,6 +82,11 @@ const router = createRouter({
       component: AdicionarSetor
     },
     {
+      path: '/editar-setor/:id/:nome/:pessoas',
+      name: 'editarSetor',
+      component: EditarSetor
+    },
+    {
       path: '/indicadores',
       name: 'indicadores',
       component: Indicadores
@@ -76,6 +95,11 @@ const router = createRouter({
       path: '/adicionar-indicador',
       name: 'adicionar-indicador',
       component: AdicionarIndicador
+    },
+    {
+      path: '/editar-indicador/:id/:nome/:descricao',
+      name: 'editarIndicador',
+      component: EditarIndicador
     },
     {
       path: '/conversas',
