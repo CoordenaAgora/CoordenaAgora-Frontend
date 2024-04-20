@@ -5,7 +5,7 @@
 
 <div v-if="inputEmail" class="flex flex-column justify-content-center m-6">
     <label class="titulo">Redefinir senha</label>
-    <label class="subtitulo" for="">Informe um email e enviaremos um código de 8 dígitos para
+    <label class="subtitulo" for="">Informe seu email cadastrado e enviaremos um código de 8 dígitos para
         alterar sua senha</label>
     <InputText class="email" v-model="email" placeholder="Digite seu e-mail..." />
     <Button class="botao-enviar" label="Enviar" @click="enviar" />
@@ -14,7 +14,7 @@
 <div v-if="inputCodigo" class="flex flex-column justify-content-center m-6">
     <label class="titulo">Redefinir senha</label>
     <label class="subtitulo" for="">Digite o código recebido através do e-mail</label>
-    <InputText class="email" v-model="codigo" placeholder="Digite o código..." />
+    <InputText class="email" v-model="codigoDigitado" placeholder="Digite o código..." />
     <Button class="botao-enviar" label="Verificar" @click="verificar" />
 </div>
 
@@ -33,20 +33,25 @@
             <Password v-model="confirmarSenha" :feedback="false" toggleMask placeholder="Confirme sua senha..." />
         </div>
     </div>
-    <Button class="botao-enviar" label="Verificar" @click="verificar" />
+    <small v-if="!validarSenhasIguais">A senhas não conferem</small>
+    <Button class="botao-enviar" label="Alterar senha" @click="alterarSenha" />
 </div>
+<Toast />
 </template>
 
 <script>
 import Button from 'primevue/button';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
+import api from "@/plugins/axios";
+import Toast from 'primevue/toast';
 
 export default {
     components: {
         Button,
         InputText,
-        Password
+        Password,
+        Toast
     },
     props: [],
     data() {
@@ -55,22 +60,72 @@ export default {
             inputCodigo: false,
             inputNovaSenha: false,
             senha: null,
+            email: null,
+            codigoVerificacao: null,
+            codigoDigitado: null,
+            confirmarSenha: null,
+
 
         };
     },
     methods: {
 
         enviar() {
-            this.inputEmail = false;
-            this.inputCodigo = true;
+            api({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/redefinir-senha",
+                data: {
+                    email: this.email,
+                },
+            }).then(response => {
+                this.codigoVerificacao = response.data;
+                this.inputEmail = false;
+                this.inputCodigo = true;
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data,
+                    life: 3000
+                });
+            });
         },
         verificar() {
-            this.inputCodigo = false;
-            this.inputNovaSenha = true;
+            if (this.codigoDigitado === this.codigoVerificacao) {
+                this.inputCodigo = false;
+                this.inputNovaSenha = true;
+            }
+        },
+        alterarSenha() {
+            if (this.validarSenhasIguais) {
+                api({
+                    method: "put",
+                    url: "http://127.0.0.1:8000/api/alterar-senha",
+                    data: {
+                        email: this.email,
+                        senha: this.senha
+                    },
+                }).then(response => {
+                    this.$router.push('/')
+
+                    
+                }).catch(erro => {
+                    this.$toast.add({
+                        severity: 'error',
+                        summary: 'Erro',
+                        detail: erro.response.data,
+                        life: 3000
+                    });
+                });
+            }
+
         }
 
     },
     computed: {
+        validarSenhasIguais() {
+            return this.senha === this.confirmarSenha;
+        }
 
     },
     mounted() {
@@ -135,12 +190,12 @@ export default {
     margin-left: 25%;
 }
 
-.campo{
+.campo {
     margin-top: 2rem;
     display: flex;
     justify-content: start;
     width: 50%;
     margin-left: 38.5%;
-    
+
 }
 </style>

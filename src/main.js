@@ -3,6 +3,7 @@ import App from './App.vue'
 import router from './router'
 import PrimeVue from 'primevue/config';
 import '@/plugins/axios.js'
+import ToastService from 'primevue/toastservice';
 
 
 
@@ -28,6 +29,8 @@ app.use(PrimeVue, {
 
 app.use(router)
 app.use(PrimeVue);
+app.use(ToastService);
+
 
 app.mount('#app')
 
