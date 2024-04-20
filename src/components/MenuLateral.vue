@@ -124,7 +124,6 @@ export default {
             document.getElementById('sidebar').classList.toggle('open-sidebar');
         },
         selecionarItem(item){
-            console.log(item);
             this.deselecionarItem();
             document.getElementById(item).classList.toggle('active');
             document.getElementById('sidebar').classList.toggle('open-sidebar');

@@ -13,8 +13,11 @@
                 </div>
             </div>
 
-
-            <label id="subtitulo" class="mt-6">Setores</label>
+            <div class="flex justify-content-between">
+                <label id="subtitulo" class="mt-6">Setores</label>
+                <RouterLink id="ver-todos" to="/setores" >Ver todos</RouterLink>
+                <!-- <label id="ver-todos">Ver todos (as)</label> -->
+            </div>
             <div class="flex flex-wrap gap-3">
                 <div id="card" v-for="(item, index) in setores" :key="index">
                     <div class="flex align-items-center ">
@@ -33,16 +36,18 @@
                         </svg>
 
                         <div class="flex flex-column ml-2">
-                            <label>{{ item.titulo }}</label>
-                            <label>{{ item.corpo }}</label>
+                            <label>{{ item.nome }}</label>
                         </div>
                     </div>
 
                 </div>
             </div>
 
+            <div class="flex justify-content-between">
+                <label id="subtitulo" class="mt-6">Pessoas</label>
+                <RouterLink id="ver-todos" to="/pessoas" >Ver todos</RouterLink>
+            </div>
 
-            <label id="subtitulo" class="mt-6">Pessoas</label>
             <div class="flex flex-wrap gap-3 mb-6">
                 <div id="card" v-for="(item, index) in pessoas" :key="index">
                     <div class="flex align-items-center ">
@@ -61,8 +66,8 @@
                         </svg>
 
                         <div class="flex flex-column ml-2">
-                            <label>{{ item.titulo }}</label>
-                            <label>{{ item.corpo }}</label>
+                            <label>{{ item.nome }}</label>
+                            <label>{{ item.email }}</label>
                         </div>
                     </div>
                 </div>
@@ -81,6 +86,7 @@
 import Card from 'primevue/card';
 import MenuLateral from '@/components/MenuLateral.vue'
 import BarraNavegacao from '@/components/BarraNavegacao.vue'
+import api from "@/plugins/axios";
 
 
 export default {
@@ -118,46 +124,32 @@ export default {
                 },
 
             ],
-            setores: [
-                {
-                    titulo: "Administrativo",
-                    corpo: "administrativo@gmail.com"
-                },
-                {
-                    titulo: "Financeiro",
-                    corpo: "financeiro@gmail.com"
-                },
-                {
-                    titulo: "Pedagogia",
-                    corpo: "pedagogia@gmail.com"
-                },
-                {
-                    titulo: "Secretaria",
-                    corpo: "secretaria@gmail.com"
-                },
-            ],
-            pessoas: [
-                {
-                    titulo: "Maria",
-                    corpo: "maria@gmail.com"
-                },
-                {
-                    titulo: "Joana",
-                    corpo: "joana@gmail.com"
-                },
-                {
-                    titulo: "Julia",
-                    corpo: "julia@gmail.com"
-                },
-                {
-                    titulo: "Carlos",
-                    corpo: "carlos@gmail.com"
-                },
-            ]
+            setores: [],
+            pessoas: []
 
         };
     },
     methods: {
+        listarPessoas() {
+            api({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/pessoas",
+
+            }).then(response => {
+                this.pessoas = response.data;
+                this.pessoas = this.pessoas.slice(0, 5);
+            }).catch(erro => {});
+        },
+        listarSetores() {
+            api({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/visualizar-setores/",
+
+            }).then(response => {
+                this.setores = response.data;
+                this.setores = this.setores.slice(0, 5);
+            }).catch(erro => {});
+        }
 
 
 
@@ -168,7 +160,8 @@ export default {
     mounted() {
         // document.getElementById('sidebar').classList.toggle('open-sidebar');
         document.getElementById('inicio').classList.toggle('active');
-
+        this.listarPessoas();
+        this.listarSetores();
     }
 
 }
@@ -231,5 +224,19 @@ export default {
 #categoria {
     color: #45A8BF;
     font-family: 'Poppins';
+}
+
+#ver-todos{
+    font-family: 'Poppins';
+    font-style: normal;
+    font-weight: 900;
+    font-size: 14px;
+    line-height: 21px;
+    letter-spacing: 0.13px;
+    text-decoration-line: underline;
+    margin-top: 3rem;    
+    margin-right: 10px;
+    color: #858585;
+    cursor: pointer;
 }
 </style>
