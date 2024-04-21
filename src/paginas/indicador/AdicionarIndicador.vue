@@ -5,6 +5,9 @@
 
         <div id="container">
             <div class="flex justify-content-end">
+                <RouterLink to="/indicadores">
+                    <Button id="botao-cancelar" label="Cancelar" @click="cancelar" />
+                </RouterLink>
                 <Button id="botao"  label="Salvar" @click="salvarIndicador"/>
             </div>
 
@@ -125,5 +128,14 @@ export default {
     border-color: #45A8BF;
     border-radius: 1.5rem;
     height: 2.5rem;
+}
+
+#botao-cancelar {
+    background-color: #AEB3BE;
+    z-index: 0;
+    border-color: #AEB3BE;
+    border-radius: 1.5rem;
+    height: 2.5rem;
+    margin-right: 1rem;
 }
 </style>
