@@ -68,7 +68,6 @@ export default {
             nome: this.$route.params.nome,
             descricao: this.$route.params.descricao,
             id: this.$route.params.id
-
         };
     },
     methods: {

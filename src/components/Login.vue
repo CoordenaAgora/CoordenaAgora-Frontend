@@ -74,6 +74,7 @@ export default {
                 },
             }).then(response => {
                 const autorizado = response.data.resultado;
+                localStorage.setItem('autorizado', autorizado);
                 if (!autorizado) {
                     this.usuarioSenhaIncorretos = true;
                 } else {
@@ -84,7 +85,10 @@ export default {
                 this.usuarioSenhaIncorretos = true;
             });
         }
-    }
+    },
+    mounted() {
+        localStorage.setItem('autorizado', "false");
+    },
 }
 </script>
 

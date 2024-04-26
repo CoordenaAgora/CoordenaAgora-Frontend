@@ -88,7 +88,7 @@
 
         <div id="logout">
             <router-link to="/">
-                <button id="logout_btn">
+                <button id="logout_btn" @click="sair">
                     <i class="fa-solid fa-right-from-bracket"></i>
                     <span class="item-description">
                         Sair
@@ -137,6 +137,9 @@ export default {
             document.getElementById('relatorios').classList.remove('active');
             document.getElementById('turmas').classList.remove('active');
             document.getElementById('indicadores').classList.remove('active');
+        },
+        sair(){
+            localStorage.setItem('autorizado', false)
         }
 
 

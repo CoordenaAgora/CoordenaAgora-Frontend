@@ -1,14 +1,33 @@
-<script setup>
-import { RouterLink, RouterView } from 'vue-router'
-import Login from './components/Login.vue'
-</script>
-
 <template>
-
-
   <RouterView />
 </template>
 
-<style>
 
-</style>
+<script>
+
+import { RouterView } from 'vue-router'
+
+export default {
+    components: {
+
+    },
+    props: [],
+    data() {
+        return {
+            
+        };
+    },
+    methods: {
+        
+      
+        
+    },
+    computed: {
+
+    },
+    beforeDestroy() {
+      localStorage.setItem('autorizado', 'false');
+  },
+
+}
+</script>
