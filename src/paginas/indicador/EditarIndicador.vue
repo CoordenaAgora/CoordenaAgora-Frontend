@@ -39,8 +39,6 @@ import InputIcon from 'primevue/inputicon';
 
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
-import ColumnGroup from 'primevue/columngroup';   // optional
-import Row from 'primevue/row';
 import Textarea from 'primevue/textarea';
 import api from "@/plugins/axios";
 

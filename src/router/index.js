@@ -122,4 +122,23 @@ const router = createRouter({
   ]
 })
 
+router.beforeEach((to, from, next) => {
+  if(to.path != "/"){
+    const autenticado = isAuthenticated() 
+    if (autenticado === 'false') {
+      next('/');
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
+});
+
+function isAuthenticated() {
+  return localStorage.getItem('autorizado');
+}
+
+
+
 export default router

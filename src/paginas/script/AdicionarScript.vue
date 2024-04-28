@@ -38,7 +38,6 @@ import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
 import api from "@/plugins/axios";
 
-
 export default {
     components: {
         Estrutura,
@@ -71,8 +70,7 @@ export default {
                 },
             }).then(response => {
                 this.$router.push('/configuracoes')
-            }).catch(erro => {
-            });
+            }).catch(erro => {});
         }
 
     },
@@ -82,7 +80,6 @@ export default {
     mounted() {
         document.getElementById('configuracoes').classList.toggle('active');
     },
-    
 
 }
 </script>
@@ -114,7 +111,6 @@ export default {
     border-radius: 1.5rem;
     height: 2.5rem;
 }
-
 
 #botao-cancelar {
     background-color: #AEB3BE;
