@@ -15,8 +15,8 @@
           </g>
         </svg>
         <div class="flex flex-column	ml-3">
-          <label id="texto-saudacao" for="">Olá, Bem-vindo</label>
-          <label id="texto-usuario" for="">Carlos Pereira</label>
+          <label id="texto-saudacao" for="">Olá, Bem-vindo!</label>
+          <label id="texto-usuario" for="">{{nome}}</label>
         </div>
       </div>
 
@@ -35,7 +35,7 @@
 
       <div class="login-button">
         <label for="">Olá, Bem-vindo!</label>
-        <label for="">Carlos Pereira</label>
+        <label for="">{{nome}}</label>
       </div>
     </div>
   </header>
@@ -100,7 +100,8 @@ export default {
           label: 'Contact',
           icon: 'pi pi-envelope'
         }
-      ]
+      ],
+      nome: null
 
     };
   },
@@ -113,6 +114,7 @@ export default {
 
   },
   mounted() {
+    this.nome = localStorage.getItem('nome');
 
   }
 

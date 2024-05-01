@@ -17,6 +17,7 @@ import GerenciarSetores from '@/paginas/setor/GerenciarSetores.vue'
 import EditarSetor from '@/paginas/setor/EditarSetor.vue'
 import EditarPessoa from '@/paginas/pessoa/EditarPessoa.vue'
 import EditarIndicador from '@/paginas/indicador/EditarIndicador.vue'
+import CadastroAluno from '@/components/CadastroAluno.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -25,6 +26,11 @@ const router = createRouter({
       path: '/',
       name: 'login',
       component: Login
+    },
+    {
+      path: '/cadastro-aluno',
+      name: 'cadastro-aluno',
+      component: CadastroAluno
     },
     {
       path: '/redefinir-senha',
@@ -111,21 +117,18 @@ const router = createRouter({
       name: 'relatorios',
       component: Relatorios
     },
-    // {
-    //   path: '/about',
-    //   name: 'about',
-    //   // route level code-splitting
-    //   // this generates a separate chunk (About.[hash].js) for this route
-    //   // which is lazy-loaded when the route is visited.
-    //   component: () => import('../views/AboutView.vue')
-    // }
   ]
 })
 
 router.beforeEach((to, from, next) => {
-  if(to.path != "/"){
+  if(to.path != "/" && to.path != "/redefinir-senha" && to.path != "/cadastro-aluno"){
     const autenticado = isAuthenticated() 
-    if (autenticado === 'false') {
+    const coordenador = isCoordenador();
+    console.log(autenticado);
+    if (!autenticado) {
+      console.log('oi');
+      next('/');
+    } else if (to.path !== "/conversas" && !coordenador){
       next('/');
     } else {
       next();
@@ -137,6 +140,10 @@ router.beforeEach((to, from, next) => {
 
 function isAuthenticated() {
   return localStorage.getItem('autorizado');
+}
+
+function isCoordenador() {
+  return localStorage.getItem('tipoAcesso') === 'coordenador';
 }
 
 

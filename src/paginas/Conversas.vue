@@ -3,7 +3,7 @@
     <MenuLateral></MenuLateral>
     <BarraNavegacao></BarraNavegacao>
 
-    <div id="container">
+    <div id="container" v-if="tipoAcesso === 'coordenador'">
         <div class="flex">
             <div class="chats">
                 <div class="flex justify-content-between conversa-item" v-for="conversa in conversas" @click="selecionarConversa(conversa)">
@@ -41,6 +41,31 @@
             </div>
         </div>
 
+    </div>
+
+    <div id="container" v-else>
+        <div class="flex">
+            <div class="conversasAluno">
+                <div class="tituloConversa">
+                    Chatbot CoordenaAgora
+                </div>
+                <div class="mensagens ">
+                    <div v-for="resposta in historico">
+                        <div v-if="resposta.quemEnviou === 'bot'" class="flex justify-content-end flex-wrap">
+                            <label :class="estiloMensagem(resposta)">{{resposta.texto}}</label>
+                        </div>
+
+                        <div v-else class="flex justify-content-start flex-wrap">
+                            <label :class="estiloMensagem(resposta)">{{resposta.texto}}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="enviarMensagem">
+                    <InputText type="text" maxlength="200" placeholder="Digite sua mensagem" @keyup.enter="enviarMensagem(mensagem)" v-model="mensagem" :disabled="desabilitado"></InputText>
+                    <Button class="botaoEnviar" :disabled="desabilitado" @click="enviarMensagem(mensagem)" label="Enviar" />
+                </div>
+            </div>
+        </div>
     </div>
     <Toast></Toast>
 </div>
@@ -91,7 +116,8 @@ export default {
             ],
             conversaSelecionada: "",
             desabilitado: false,
-            indicadoresEncontrados: ["teste"]
+            indicadoresEncontrados: ["teste"],
+            tipoAcesso: null
 
         };
     },
@@ -131,7 +157,7 @@ export default {
                 this.$toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: erro.response.data,
+                    detail: erro.response.data.mensagem,
                     life: 3000
                 });
             });
@@ -155,6 +181,8 @@ export default {
     },
     mounted() {
         document.getElementById('conversas').classList.toggle('active');
+        this.tipoAcesso = localStorage.getItem('tipoAcesso');
+        console.log(this.tipoAcesso);
 
     }
 
@@ -239,6 +267,13 @@ button {
     width: 60%;
     position: relative;
 
+}
+
+.conversasAluno{
+    background-color: #F4F8F9;
+    height: 45rem;
+    width: 100%;
+    position: relative;
 }
 
 .menu {
