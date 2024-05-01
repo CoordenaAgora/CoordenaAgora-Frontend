@@ -1,4 +1,9 @@
 <template>
+<Menubar>
+    <template #start>
+        <img src="/public/logo-e-nome.png" height="80px" style="margin-left: 15px;" alt="">
+    </template>
+</Menubar>
 <div class="flex flex-col md:flex-row">
     <div id="container" class="w-full md:w-1/2">
         <Card class="card">
@@ -9,25 +14,24 @@
                     Faça seu login para entrar na solução CoordenaAgora
                 </p>
                 <div class="mt-5 mb-2">
-                    <label>Usuário</label>
+                    <label>Email</label>
                 </div>
                 <div>
-                    <InputText id="usuario" v-model="usuario" placeholder="Digite seu usuário..." />
+                    <InputText id="usuario" v-model="email" placeholder="Digite seu usuário..." />
                 </div>
                 <div class="mt-4 mb-2">
                     <label>Senha</label>
                 </div>
                 <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite sua senha..." v-on:keyup.enter="entrar" />
-                <div class="acoes-senha">
-                    <div class="flex items-center">
-                        <Checkbox v-model="lembrarSenha" :binary="true" />
-                        <label class="ml-1">Lembrar-me</label>
-                    </div>
-                    <router-link to="/redefinir-senha">Redefinir senha</router-link>
-                </div>
                 <label class="senha-incorreta" v-if="usuarioSenhaIncorretos">
                     Usuário ou senha incorretos</label>
                 <Button class="w-full mt-6 botao-entrar" label="Entrar" @click="entrar" />
+
+                <div>
+                    <div class="linha"></div>
+                    <router-link class="acoes-senha" to="/cadastro-aluno">Acessar cadastro de aluno</router-link>
+                    <router-link class="acoes-senha" to="/redefinir-senha">Redefinir senha</router-link>
+                </div>
             </template>
         </Card>
     </div>
@@ -45,6 +49,9 @@ import Password from 'primevue/password';
 import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
 import api from "@/plugins/axios";
+import Menubar from 'primevue/menubar';
+import { mdiEmail } from "@mdi/js";
+
 
 export default {
     components: {
@@ -53,11 +60,12 @@ export default {
         InputText,
         Password,
         Checkbox,
-        Button
+        Button,
+        Menubar
     },
     data() {
         return {
-            usuario: null,
+            email: null,
             senha: null,
             lembrarSenha: false,
             usuarioSenhaIncorretos: false
@@ -69,7 +77,7 @@ export default {
                 method: "post",
                 url: "http://127.0.0.1:8000/login/",
                 data: {
-                    usuario: this.usuario,
+                    email: this.email,
                     senha: this.senha,
                 },
             }).then(response => {
@@ -127,8 +135,11 @@ export default {
 
 .acoes-senha {
     display: flex !important;
-    justify-content: space-between;
+    justify-content: center;
     margin-top: 20px;
+    text-decoration: underline;
+    color: #4D4D4D;
+    font-family: 'Poppins';
 }
 
 .senha-incorreta {
@@ -205,5 +216,12 @@ export default {
         overflow: hidden;
     }
 
+}
+
+.linha {
+
+    border: 1px solid #E9EDEF;
+    transform: rotate(-0.31deg);
+    margin-top: 3rem
 }
 </style>

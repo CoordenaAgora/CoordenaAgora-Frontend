@@ -131,7 +131,7 @@ export default {
                 this.$toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: erro.response.data,
+                    detail: erro.response.data.mensagem,
                     life: 3000
                 });
             });
