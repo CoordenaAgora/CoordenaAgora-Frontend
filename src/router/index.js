@@ -124,9 +124,7 @@ router.beforeEach((to, from, next) => {
   if(to.path != "/" && to.path != "/redefinir-senha" && to.path != "/cadastro-aluno"){
     const autenticado = isAuthenticated() 
     const coordenador = isCoordenador();
-    console.log(autenticado);
     if (!autenticado) {
-      console.log('oi');
       next('/');
     } else if (to.path !== "/conversas" && !coordenador){
       next('/');

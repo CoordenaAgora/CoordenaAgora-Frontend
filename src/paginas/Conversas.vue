@@ -3,6 +3,7 @@
     <MenuLateral></MenuLateral>
     <BarraNavegacao></BarraNavegacao>
 
+    
     <div id="container" v-if="tipoAcesso === 'coordenador'">
         <div class="flex">
             <div class="chats">
@@ -15,14 +16,14 @@
                 <div class="tituloConversa">
                     {{ conversaSelecionada.nome }}
                 </div>
-                <div class="mensagens ">
+                <div id="divMensagens" class="mensagens">
                     <div v-for="resposta in historico">
-                        <div v-if="resposta.quemEnviou === 'bot'" class="flex justify-content-end flex-wrap">
-                            <label :class="estiloMensagem(resposta)">{{resposta.texto}}</label>
+                        <div v-if="resposta.quem_enviou === 'bot'" class="flex justify-content-end flex-wrap">
+                            <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
                         </div>
 
                         <div v-else class="flex justify-content-start flex-wrap">
-                            <label :class="estiloMensagem(resposta)">{{resposta.texto}}</label>
+                            <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
                         </div>
                     </div>
                 </div>
@@ -32,7 +33,7 @@
                 </div>
             </div>
             <div class="menu">
-                <Button class="botaoAssumirConversa" @click="assumirConversa" label="Assumir conversa" />
+                <Button class="botaoAssumirConversa" @click="trocarStatusAssumirConversa()" :label="labelBotaoAssumirConversa" />
 
                 <div class="categoriasEncontradas">
                     <label for="lastname1">Indicadores encontrados pelo BOT: </label>
@@ -51,12 +52,12 @@
                 </div>
                 <div class="mensagens ">
                     <div v-for="resposta in historico">
-                        <div v-if="resposta.quemEnviou === 'bot'" class="flex justify-content-end flex-wrap">
-                            <label :class="estiloMensagem(resposta)">{{resposta.texto}}</label>
+                        <div v-if="resposta.quem_enviou === 'bot'" class="flex justify-content-end flex-wrap">
+                            <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
                         </div>
 
                         <div v-else class="flex justify-content-start flex-wrap">
-                            <label :class="estiloMensagem(resposta)">{{resposta.texto}}</label>
+                            <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
                         </div>
                     </div>
                 </div>
@@ -117,7 +118,11 @@ export default {
             conversaSelecionada: "",
             desabilitado: false,
             indicadoresEncontrados: ["teste"],
-            tipoAcesso: null
+            tipoAcesso: null,
+            idAluno: null,
+            idCoordenador: null,
+            labelBotaoAssumirConversa: "Assumir conversa",
+            assumirConversa: false
 
         };
     },
@@ -132,12 +137,8 @@ export default {
                 });
                 return;
             }
-            const mensagem = {
-                quemEnviou: "aluno",
-                texto: textoMensagem
-            }
-            this.historico.push(mensagem)
             this.desabilitado = true;
+            this.salvarMensagem(textoMensagem);
 
             api({
                 method: "post",
@@ -147,11 +148,9 @@ export default {
                     pergunta: this.mensagem,
                 },
             }).then(response => {
-                console.log(response);
-                this.historico.push({
-                    texto: response.data.mensagem,
-                    quemEnviou: "bot"
-                })
+                this.salvarMensagem(response.data.mensagem, "bot");
+                this.resgatarHistoricoAluno();
+        
                 this.desabilitado = false;
             }).catch(erro => {
                 this.$toast.add({
@@ -166,14 +165,112 @@ export default {
         },
         selecionarConversa(conversa) {
             this.conversaSelecionada = conversa
+            api({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/listar-mensagens-por-aluno",
+                params: {
+                    id: conversa.id
+                },
+            }).then(response => {
+                this.historico = response.data
+                var divMensagens = document.getElementById("divMensagens");
+                divMensagens.scrollTop = divMensagens.scrollHeight;
+
+                
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data.mensagem,
+                    life: 3000
+                });
+            });
         },
         estiloMensagem(resposta) {
-            if (resposta.quemEnviou === 'aluno') {
+            if (resposta.quem_enviou === 'aluno') {
                 return "mensagemAluno"
             } else {
                 return "mensagemBot"
             }
+        },
+        salvarMensagem(textoMensagem, bot){
+            const data = new Date();
+            const quemEnviou = bot ? bot : this.tipoAcesso;
+            const idCoordenador = bot ? null : this.idCoordenador;
+            api({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/salvar-mensagem",
+                data: {
+                    texto_mensagem: textoMensagem,
+                    data_hora: data,
+                    quem_enviou: quemEnviou,
+                    id_aluno: this.idAluno,
+                    id_coordenador: idCoordenador
+                },
+            }).then(response => {
+                this.resgatarHistoricoAluno();
+                
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data.mensagem,
+                    life: 3000
+                });
+            });
+        },
+        resgatarHistoricoAluno(){
+            api({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/listar-mensagens-por-aluno",
+                params: {
+                    id: this.idAluno ? this.idAluno : this.idCoordenador
+                },
+            }).then(response => {
+                this.historico = response.data
+                var divMensagens = document.getElementById("divMensagens");
+                divMensagens.scrollTop = divMensagens.scrollHeight;
+
+                
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data.mensagem,
+                    life: 3000
+                });
+            });
+        },
+        listarTodosAlunos(){
+            api({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/listar-todos-alunos",
+            }).then(response => {
+                //ver depois como pegar a hora
+                this.conversas = response.data.map(conversa => {
+                    return {
+                        id: conversa.id,
+                        nome: conversa.nome,
+                        dataHora: "15:00"
+                    }
+                })
+                              
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data.mensagem,
+                    life: 3000
+                });
+            });
+        },
+        trocarStatusAssumirConversa(){
+            this.assumirConversa = !this.assumirConversa;
+            this.labelBotaoAssumirConversa = this.assumirConversa ? "Assumindo conversa" : "Assumir conversa"
+
+
         }
+
 
     },
     computed: {
@@ -182,8 +279,14 @@ export default {
     mounted() {
         document.getElementById('conversas').classList.toggle('active');
         this.tipoAcesso = localStorage.getItem('tipoAcesso');
-        console.log(this.tipoAcesso);
-
+        if(this.tipoAcesso === 'aluno'){
+            this.idAluno = localStorage.getItem('id');
+            this.resgatarHistoricoAluno();
+        } else {
+            this.idCoordenador = localStorage.getItem('id');
+            this.listarTodosAlunos();
+        }
+        
     }
 
 }

@@ -1,7 +1,7 @@
 <template>
 <Menubar>
     <template #start>
-        <img src="/public/logo-e-nome.png" height="80px" style="margin-left: 15px;" alt="">
+        <img src="/logo-e-nome.png" height="80px" style="margin-left: 15px;" alt="">
     </template>
 </Menubar>
 <div class="flex flex-col md:flex-row">
@@ -93,6 +93,7 @@ export default {
                     localStorage.setItem('email', dadosDoUsuario.email);
                     localStorage.setItem('instituicao', dadosDoUsuario.instituicao);
                     localStorage.setItem('curso', dadosDoUsuario.curso);
+                    localStorage.setItem('id', dadosDoUsuario.id);
 
                     // Agora, faça a verificação de dadosDoUsuario.tipoAcesso
                     if (dadosDoUsuario.tipoAcesso === 'coordenador') {

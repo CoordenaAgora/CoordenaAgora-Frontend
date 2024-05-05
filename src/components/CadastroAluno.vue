@@ -119,7 +119,6 @@ export default {
                 this.$router.push('/')
 
             }).catch(erro => {
-                console.log(erro);
                 this.$toast.add({
                     severity: 'error',
                     summary: 'Erro',

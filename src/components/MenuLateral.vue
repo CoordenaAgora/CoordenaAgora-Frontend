@@ -156,8 +156,6 @@ export default {
     },
     mounted() {
         this.tipoAcesso = localStorage.getItem('tipoAcesso');
-        console.log(this.tipoAcesso);
-
     }
 
 }
