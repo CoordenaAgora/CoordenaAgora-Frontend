@@ -5,12 +5,7 @@
             <!-- <img src="src/images/avatar.jpg" id="user_avatar" alt="Avatar"> -->
 
             <p id="user_infos">
-                <span class="item-description">
-                    Fulano de Tal
-                </span>
-                <span class="item-description">
-                    Lorem Ipsum
-                </span>
+              
             </p>
         </div>
 
@@ -224,6 +219,7 @@ export default {
     border-radius: 8px;
     padding: 14px;
     cursor: pointer;
+    color: white
 }
 
 .side-item.active {
@@ -288,6 +284,7 @@ export default {
 
 #open_btn_icon {
     transition: transform .3s ease;
+    color: white
 }
 
 .open-sidebar #open_btn_icon {
@@ -302,6 +299,7 @@ export default {
     font-size: 14px;
     transition: width .6s;
     height: 0px;
+    color: white
 }
 
 #sidebar.open-sidebar {

@@ -1,44 +1,44 @@
 <template>
-<Menubar>
-    <template #start>
-        <img src="/logo-e-nome.png" height="80px" style="margin-left: 15px;" alt="">
-    </template>
-</Menubar>
-<div class="flex flex-col md:flex-row">
-    <div id="container" class="w-full md:w-1/2">
-        <Card class="card">
-            <template #title>Bem vindo!</template>
-            <template #content>
-                <h1>Login</h1>
-                <p class="m-0">
-                    Faça seu login para entrar na solução CoordenaAgora
-                </p>
-                <div class="mt-5 mb-2">
-                    <label>Email</label>
-                </div>
-                <div>
-                    <InputText id="usuario" v-model="email" placeholder="Digite seu usuário..." />
-                </div>
-                <div class="mt-4 mb-2">
-                    <label>Senha</label>
-                </div>
-                <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite sua senha..." v-on:keyup.enter="entrar" />
-                <label class="senha-incorreta" v-if="usuarioSenhaIncorretos">
-                    Usuário ou senha incorretos</label>
-                <Button class="w-full mt-6 botao-entrar" label="Entrar" @click="entrar" />
+    <Menubar style="height: 80px;">
+        <template #start>
+            <img src="/logo-e-nome.png" height="70px" style="margin-left: 15px;" alt="">
+        </template>
+    </Menubar>
+    <div class="flex">
+            <Card class="card">
+                <template #title style="margin-bottom: 0px;">Bem vindo!</template>
+                <template #content>
+                    <h2>Login</h2>
+                    <p class="m-0">
+                        Faça seu login para entrar na solução CoordenaAgora
+                    </p>
+                    <div class="mt-3 mb-2">
+                        <label>Email</label>
+                    </div>
+                    <div>
+                        <InputText id="usuario" v-model="email" placeholder="Digite seu email..."  />
+                    </div>
+                    <div class="mt-3 mb-2">
+                        <label>Senha</label>
+                    </div>
+                    <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite sua senha..."
+                        v-on:keyup.enter="entrar" inputId="senha" id="senha"/>
+                    <label class="senha-incorreta" v-if="usuarioSenhaIncorretos">
+                        Usuário ou senha incorretos</label>
+                    <Button class="w-full mt-4 botao-entrar" label="Entrar" @click="entrar" />
 
-                <div>
-                    <div class="linha"></div>
-                    <router-link class="acoes-senha" to="/cadastro-aluno">Acessar cadastro de aluno</router-link>
-                    <router-link class="acoes-senha" to="/redefinir-senha">Redefinir senha</router-link>
-                </div>
-            </template>
-        </Card>
+                    <div>
+                        <div class="linha"></div>
+                        <router-link class="acoes-senha" to="/cadastro-aluno">Acessar cadastro de aluno</router-link>
+                        <router-link class="acoes-senha" to="/redefinir-senha">Redefinir senha</router-link>
+                    </div>
+                </template>
+            </Card>
+                <img src="\imagem-login.png" alt="imagem" class="imagem" id="img">
+
+
+
     </div>
-    <div class="hidden md:block md:w-1/2">
-        <Image src="\imagem-login.png" alt="Image" class="imagem" />
-    </div>
-</div>
 </template>
 
 <script>
@@ -50,7 +50,6 @@ import Checkbox from 'primevue/checkbox';
 import Button from 'primevue/button';
 import api from "@/plugins/axios";
 import Menubar from 'primevue/menubar';
-import { mdiEmail } from "@mdi/js";
 
 
 export default {
@@ -114,31 +113,6 @@ export default {
 </script>
 
 <style scoped>
-.card {
-    margin-top: 5rem;
-    overflow: hidden;
-    padding: 15px;
-    width: fit-content;
-    margin: 10%;
-    margin-left: 10%;
-    margin-top: 15%;
-}
-
-.imagem {
-    max-width: 70%;
-    height: auto;
-    display: flex;
-    flex-direction: column;
-    align-content: stretch;
-    justify-content: space-evenly;
-    align-items: stretch;
-    margin-top: 8%;
-    margin-left: 5%;
-}
-
-#usuario {
-    width: 100% !important;
-}
 
 .botao-entrar {
     box-shadow: 0px 10px 40px -12px #45A8BF;
@@ -149,7 +123,7 @@ export default {
 .acoes-senha {
     display: flex !important;
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 5px;
     text-decoration: underline;
     color: #4D4D4D;
     font-family: 'Poppins';
@@ -162,79 +136,70 @@ export default {
     display: flex;
 }
 
-@media only screen and (max-width: 500px) {
-    .card {
-        width: auto;
-        margin: 10%;
-        margin-top: 30%;
-        padding: 15px;
+@media all and (max-width: 500px) {
+    #img{
+        display: none;
     }
 
     #usuario {
-        width: 108% !important;
+        width: 100% !important;
+        height: 2.5rem
     }
+
+    #senha{
+        height: 2.5rem;
+    }  
 }
 
-@media only screen and (max-width: 2000) {
+@media all and (max-width: 2000px) {
+    
     .card {
-        margin-top: 5rem;
-        overflow: hidden;
-        padding: 15px;
-        width: fit-content;
-        margin: 10%;
-        margin-left: 20%;
-        margin-top: 20%;
+        margin-left: 5%;
+        margin-right: 5%;
+        margin-top: 1rem;
+        margin-bottom: 0.5rem;
+        height: 50%;
     }
 
     .imagem {
         max-width: 50%;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        align-content: stretch;
-        justify-content: space-evenly;
-        align-items: stretch;
-        margin-top: 10%;
-        margin-left: 15%;
+        height: 50%;
     }
 
     #usuario {
-        padding: 15px;
-        width: 80% !important;
-        align-content: stretch;
+        width: 100% !important;
+        height: 2.5rem
     }
 
-    #app {
-        overflow: hidden;
+    #senha{
+        height: 2.5rem;
     }
-
 }
 
 @media only screen and (min-width: 2000px) {
     .card {
-        margin-top: 5rem;
+        margin-top: 10rem;
         overflow: hidden;
-        padding: 15px;
-        width: fit-content;
-        margin: 20%;
-        margin-left: 20%;
-        margin-top: 15%;
+        height: fit-content;
+        margin-left: 5%;
+        margin-right: 15%; 
+        padding: 10px;       
+    }
+
+    #img {
+        height: 50rem;
     }
 
     #usuario {
-        width: 68% !important;
+        width: 100% !important;
     }
 
-    #container {
-        overflow: hidden;
-    }
 
 }
 
 .linha {
-
     border: 1px solid #E9EDEF;
     transform: rotate(-0.31deg);
-    margin-top: 3rem
+    margin-top: 1.5rem
 }
 </style>
