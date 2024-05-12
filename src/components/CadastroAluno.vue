@@ -5,18 +5,20 @@
     </template>
 </Menubar>
 
-<div class="flex flex-col md:flex-row">
-    <div id="container" class="w-full md:w-1/2">
+<div class="flex justify-content-center">
+    <div id="container">
         <Card class="card">
             <template #title>Bem vindo!</template>
             <template #content>
-                <h1 class="flex justify-content-center mb-5">Cadastro do aluno</h1>
+                <h2 class="flex justify-content-center mb-2">Cadastro do aluno</h2>
 
                 <div class="formgrid grid">
                     <div class="field col">
                         <div class="field col">
                             <label>Email</label>
-                            <input type="text" v-model="email" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
+                            <div>
+                                <input type="text" style="width: 25rem; height: 2.5rem;"  v-model="email" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary "  placeholder="Digite o email...">
+                            </div>
                         </div>
 
                     </div>
@@ -24,41 +26,40 @@
                     <div class="field col">
                         <label>Senha</label>
                         <div>
-                            <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite sua senha..." />
+                            <Password v-model="senha" inputId="senha" id="senha" inputStyle="width: 25rem; height: 2.5rem;" :feedback="false" toggleMask placeholder="Digite a senha..." />
                         </div>
                     </div>
 
                 </div>
 
-                <div class="formgrid grid">
+                <div class="formgrid grid" style="margin-left: 0.05rem">
                     <div class="field col">
                         <label for="lastname2">Instituição</label>
                         <div>
-                            <AutoComplete v-model="instituicao" class="w-max" optionLabel="nome" :suggestions="instituicoes" @complete="buscarInstituicoesPorNome" completeOnFocus />
+                            <AutoComplete v-model="instituicao" inputStyle="width: 25rem; height: 2.5rem;" optionLabel="nome" :suggestions="instituicoes" @complete="buscarInstituicoesPorNome" completeOnFocus inputId="autocomplete"  placeholder="Selecione a Instituição..."/>
                         </div>
                     </div>
 
                     <div class="field col">
                         <label for="lastname2">Curso</label>
                         <div>
-                            <AutoComplete v-model="curso" style="height: 42px;" optionLabel="nome" :suggestions="cursos" @complete="buscarCursosPorNome" completeOnFocus />
+                            <AutoComplete v-model="curso" style="height: 42px;" optionLabel="nome" :suggestions="cursos" @complete="buscarCursosPorNome" completeOnFocus inputStyle="width: 25rem; height: 2.5rem;"  placeholder="Selecione o curso..."/>
                         </div>
                     </div>
 
                 </div>
 
-                <div class="formgrid grid">
-
+                <div class="formgrid grid" style="margin-left: 0.05rem">
                     <div class="field col">
                         <label>Nome</label>
                         <div>
-                            <InputText v-model="nome" placeholder="Digite o nome completo..." />
+                            <InputText v-model="nome" placeholder="Digite o nome completo do aluno..." style="width: 25rem; height: 2.5rem;" />
                         </div>
                     </div>
 
                 </div>
 
-                <Button class="w-full mt-6 botao-entrar" label="Cadastrar" @click="cadastrarAluno" />
+                <Button class="w-full mt-4 botao-entrar" label="Cadastrar" @click="cadastrarAluno" />
 
             </template>
         </Card>
@@ -157,11 +158,18 @@ export default {
 </script>
 
 <style scoped>
+
+#container{
+    width: 100%;
+
+}
+
 .card {
     justify-content: center;
     margin-left: 15%;
     margin-right: 15%;
-    margin-top: 5%;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
 }
 
 #usuario {
@@ -188,6 +196,15 @@ export default {
     margin-top: 30px;
     justify-content: center;
     display: flex;
+}
+
+#senha{
+    height: 2.5rem;
+}
+
+#autocomplete{
+    height: 2.5rem;
+    width: 25rem;
 }
 
 /**

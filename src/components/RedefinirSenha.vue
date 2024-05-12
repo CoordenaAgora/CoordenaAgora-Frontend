@@ -1,42 +1,50 @@
 <template>
-<div class="flex justify-content-center">
-    <img src="/logo-e-nome.png" alt="Logo">
-</div>
-
-<div v-if="inputEmail" class="flex flex-column justify-content-center m-6">
-    <label class="titulo">Redefinir senha</label>
-    <label class="subtitulo" for="">Informe seu email cadastrado e enviaremos um código de 8 dígitos para
-        alterar sua senha</label>
-    <InputText class="email" v-model="email" placeholder="Digite seu e-mail..." />
-    <Button class="botao-enviar" label="Enviar" @click="enviar" />
-</div>
-
-<div v-if="inputCodigo" class="flex flex-column justify-content-center m-6">
-    <label class="titulo">Redefinir senha</label>
-    <label class="subtitulo" for="">Digite o código recebido através do e-mail</label>
-    <InputText class="email" v-model="codigoDigitado" placeholder="Digite o código..." />
-    <Button class="botao-enviar" label="Verificar" @click="verificar" />
-</div>
-
-<div v-if="inputNovaSenha" class="flex flex-column justify-content-center m-6">
-    <label class="titulo">Digite sua nova senha</label>
-    <div class="flex flex-column">
-        <label class="campo">Senha</label>
-        <div class="senha">
-            <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite sua senha..." />
-        </div>
+    <div class="flex justify-content-center">
+        <img src="/logo-e-nome.png" alt="Logo">
     </div>
 
-    <div class="flex flex-column">
-        <label class="campo">Confirmar senha</label>
-        <div class="senha">
-            <Password v-model="confirmarSenha" :feedback="false" toggleMask placeholder="Confirme sua senha..." />
-        </div>
+    <div v-if="inputEmail" class="flex flex-column justify-content-center m-6">
+        <label class="titulo">Redefinir senha</label>
+        <label class="subtitulo" for="">Informe seu email cadastrado e enviaremos um código de 8 dígitos para
+            alterar sua senha</label>
+        <InputText class="email" v-model="email" placeholder="Digite seu e-mail..." v-on:keyup.enter="enviar" />
+        <Button class="botao-enviar" label="Enviar" @click="enviar" />
     </div>
-    <small v-if="!validarSenhasIguais">A senhas não conferem</small>
-    <Button class="botao-enviar" label="Alterar senha" @click="alterarSenha" />
-</div>
-<Toast />
+
+    <div v-if="inputCodigo" class="flex flex-column justify-content-center m-6">
+        <label class="titulo">Redefinir senha</label>
+        <label class="subtitulo" for="">Digite o código recebido através do e-mail</label>
+        <InputText class="email" v-model="codigoDigitado" placeholder="Digite o código..." v-on:keyup.enter="verificar" />
+        <label class="flex justify-content-center p-error mt-1" v-if="codigoIncorreto">Código incorreto</label>
+        <Button class="botao-enviar" label="Verificar" @click="verificar" />
+    </div>
+
+    <div v-if="true" class="m-6">
+        <label class="titulo">Digite sua nova senha</label>
+        <div style="margin-left: 35%; ">
+            <div class="field">
+                <label for="firstname1">Nova senha</label>
+                <div>
+                    <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite a nova senha..."  inputStyle="width: 25rem; height: 2.5rem;" />
+                </div>
+            </div>
+            <div class="field">
+                <label for="lastname1">Confirmar senha</label>
+                <div>
+                    <Password v-model="confirmarSenha" :feedback="false" toggleMask placeholder="Confirme sua senha..."  inputStyle="width: 25rem; height: 2.5rem;" v-on:keyup.enter="alterarSenha"/>
+                </div>
+            </div>
+            
+        </div>
+        <label class="flex justify-content-center p-error mt-1" v-if="!validarSenhasIguais">As senhas não conferem</label>
+
+        <Button class="botao-enviar" label="Alterar senha" @click="alterarSenha" />
+    </div>
+    <Toast />
+
+    <Dialog v-model:visible="visivel" modal header="Enviando código" :style="{ width: '25rem' }" :closable="false">
+        <span class="p-text-secondary block mb-5">Aguarde, o código está sendo enviado.</span>
+    </Dialog>
 </template>
 
 <script>
@@ -45,13 +53,16 @@ import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
 import api from "@/plugins/axios";
 import Toast from 'primevue/toast';
+import Dialog from 'primevue/dialog';
+
 
 export default {
     components: {
         Button,
         InputText,
         Password,
-        Toast
+        Toast,
+        Dialog
     },
     props: [],
     data() {
@@ -64,13 +75,15 @@ export default {
             codigoVerificacao: null,
             codigoDigitado: null,
             confirmarSenha: null,
+            codigoIncorreto: false,
+            visivel: false
 
 
         };
     },
     methods: {
-
         enviar() {
+            this.visivel = true;
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/redefinir-senha",
@@ -81,7 +94,9 @@ export default {
                 this.codigoVerificacao = response.data;
                 this.inputEmail = false;
                 this.inputCodigo = true;
+                this.visivel = false;
             }).catch(erro => {
+                this.visivel = false;
                 this.$toast.add({
                     severity: 'error',
                     summary: 'Erro',
@@ -94,9 +109,13 @@ export default {
             if (this.codigoDigitado === this.codigoVerificacao) {
                 this.inputCodigo = false;
                 this.inputNovaSenha = true;
+                this.codigoIncorreto = false;
+            } else {
+                this.codigoIncorreto = true;
             }
         },
         alterarSenha() {
+            console.log("teste");
             if (this.validarSenhasIguais) {
                 api({
                     method: "put",
@@ -108,7 +127,7 @@ export default {
                 }).then(response => {
                     this.$router.push('/')
 
-                    
+
                 }).catch(erro => {
                     this.$toast.add({
                         severity: 'error',

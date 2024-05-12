@@ -16,13 +16,13 @@
                         <label>Email</label>
                     </div>
                     <div>
-                        <InputText id="usuario" v-model="email" placeholder="Digite seu email..."  />
+                        <InputText id="usuario" v-model="email" placeholder="Digite seu email..."   />
                     </div>
                     <div class="mt-3 mb-2">
                         <label>Senha</label>
                     </div>
                     <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite sua senha..."
-                        v-on:keyup.enter="entrar" inputId="senha" id="senha"/>
+                        v-on:keyup.enter="entrar" inputId="senha" id="senha" inputStyle="width: 25rem; height: 2.5rem;"/>
                     <label class="senha-incorreta" v-if="usuarioSenhaIncorretos">
                         Usuário ou senha incorretos</label>
                     <Button class="w-full mt-4 botao-entrar" label="Entrar" @click="entrar" />

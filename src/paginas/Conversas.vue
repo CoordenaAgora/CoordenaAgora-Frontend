@@ -139,11 +139,15 @@ export default {
             }
             this.desabilitado = true;
             this.salvarMensagem(textoMensagem);
+            let contador = localStorage.getItem('contador');
+            localStorage.setItem('contador', contador++);
+
 
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/perguntas",
                 data: {
+                    //mudar para id
                     user: "teste",
                     pergunta: this.mensagem,
                 },
@@ -230,8 +234,6 @@ export default {
                 this.historico = response.data
                 var divMensagens = document.getElementById("divMensagens");
                 divMensagens.scrollTop = divMensagens.scrollHeight;
-
-                
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
@@ -267,16 +269,13 @@ export default {
         trocarStatusAssumirConversa(){
             this.assumirConversa = !this.assumirConversa;
             this.labelBotaoAssumirConversa = this.assumirConversa ? "Assumindo conversa" : "Assumir conversa"
-
-
         }
-
-
     },
     computed: {
 
     },
     mounted() {
+        localStorage.setItem('contador', 0)
         document.getElementById('conversas').classList.toggle('active');
         this.tipoAcesso = localStorage.getItem('tipoAcesso');
         if(this.tipoAcesso === 'aluno'){
@@ -285,10 +284,8 @@ export default {
         } else {
             this.idCoordenador = localStorage.getItem('id');
             this.listarTodosAlunos();
-        }
-        
+        }        
     }
-
 }
 </script>
 
@@ -304,19 +301,18 @@ export default {
 
 #container {
     margin-left: calc(82px + 50px);
-    margin-top: 2rem;
+    margin-top: 1rem;
     margin-right: 2rem;
     background-color: white;
     z-index: -1;
-    padding: 2rem;
+    padding: 0.5rem;
 }
 
 #chat-container {
     background-color: #fff;
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2);    width: 100%;
 }
 
 #chat-history {
@@ -359,30 +355,30 @@ button {
 
 .chats {
     width: 20%;
-    height: 45rem;
-    border: 1px solid #E9EDEF;
+    height: 30rem;
+    border: 1.75px solid #E9EDEF;
 
 }
 
 .conversas {
     background-color: #F4F8F9;
-    height: 45rem;
+    height: 30rem;
     width: 60%;
     position: relative;
-
+    border: 1px solid #E9EDEF;
 }
 
 .conversasAluno{
     background-color: #F4F8F9;
-    height: 45rem;
+    height: 30rem;
     width: 100%;
     position: relative;
 }
 
 .menu {
-    height: 45rem;
+    height: 30rem;
     width: 15%;
-    border: 1px solid #E9EDEF;
+    border: 1.75px solid #E9EDEF;
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -431,7 +427,7 @@ button {
 
 .mensagens {
     width: 100%;
-    height: 33.5rem;
+    height: 60%;
     margin-bottom: 30%;
     overflow-y: auto;
     display: flex;
