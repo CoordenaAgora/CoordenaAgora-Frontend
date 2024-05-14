@@ -219,7 +219,6 @@ export default {
     border-radius: 8px;
     padding: 14px;
     cursor: pointer;
-    color: white
 }
 
 .side-item.active {
@@ -299,7 +298,6 @@ export default {
     font-size: 14px;
     transition: width .6s;
     height: 0px;
-    color: white
 }
 
 #sidebar.open-sidebar {

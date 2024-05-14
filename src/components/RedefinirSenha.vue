@@ -19,7 +19,7 @@
         <Button class="botao-enviar" label="Verificar" @click="verificar" />
     </div>
 
-    <div v-if="true" class="m-6">
+    <div v-if="inputNovaSenha" class="m-6">
         <label class="titulo">Digite sua nova senha</label>
         <div style="margin-left: 35%; ">
             <div class="field">
