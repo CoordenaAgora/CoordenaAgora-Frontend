@@ -122,12 +122,20 @@ export default {
             idAluno: null,
             idCoordenador: null,
             labelBotaoAssumirConversa: "Assumir conversa",
-            assumirConversa: false
+            assumirConversa: false,
+            connection: null
 
         };
     },
     methods: {
         enviarMensagem(textoMensagem) {
+
+            // const messageData = {
+            //     message: this.newMessage,
+            // };
+            // this.connection.send(JSON.stringify(messageData));
+            // this.newMessage = '';
+
             if (!textoMensagem) {
                 this.$toast.add({
                     severity: 'error',
@@ -154,7 +162,7 @@ export default {
             }).then(response => {
                 this.salvarMensagem(response.data.mensagem, "bot");
                 this.resgatarHistoricoAluno();
-        
+
                 this.desabilitado = false;
             }).catch(erro => {
                 this.$toast.add({
@@ -180,7 +188,7 @@ export default {
                 var divMensagens = document.getElementById("divMensagens");
                 divMensagens.scrollTop = divMensagens.scrollHeight;
 
-                
+
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
@@ -213,7 +221,7 @@ export default {
                 },
             }).then(response => {
                 this.resgatarHistoricoAluno();
-                
+
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
@@ -256,7 +264,7 @@ export default {
                         dataHora: "15:00"
                     }
                 })
-                              
+
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
@@ -284,7 +292,28 @@ export default {
         } else {
             this.idCoordenador = localStorage.getItem('id');
             this.listarTodosAlunos();
-        }        
+        }
+
+        console.log("Iniciando conexão com o web socket");
+        this.connection = new WebSocket(`ws://127.0.0.1:8000/ws/chat/teste/`);
+
+        this.connection.onmessage = (event) => {
+            console.log("Mensagem recebida do WebSocket:", event.data);
+            const data = JSON.parse(event.data);
+            this.historico.push(data.message);
+        }
+
+        this.connection.onopen = (event) => {
+            console.log("Conexão com o WebSocket criada com sucesso", event);
+        }
+
+        this.connection.onclose = (event) => {
+            console.log("Conexão com o WebSocket fechada", event);
+        }
+
+        this.connection.onerror = (event) => {
+            console.error("Erro no WebSocket", event);
+        }
     }
 }
 </script>
@@ -312,7 +341,8 @@ export default {
     background-color: #fff;
     border-radius: 10px;
     padding: 20px;
-    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2);    width: 100%;
+    box-shadow: 0px 9px 46px 8px rgba(0, 0, 0, 0.12), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 11px 15px rgba(0, 0, 0, 0.2);
+    width: 100%;
 }
 
 #chat-history {
