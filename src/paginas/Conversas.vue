@@ -3,7 +3,6 @@
     <MenuLateral></MenuLateral>
     <BarraNavegacao></BarraNavegacao>
 
-    
     <div id="container" v-if="tipoAcesso === 'coordenador'">
         <div class="flex">
             <div class="chats">
@@ -18,7 +17,7 @@
                 </div>
                 <div id="divMensagens" class="mensagens">
                     <div v-for="resposta in historico">
-                        <div v-if="resposta.quem_enviou === 'bot'" class="flex justify-content-end flex-wrap">
+                        <div v-if="resposta.quem_enviou === 'bot' || resposta.quemEnviou === 'coordenador'" class="flex justify-content-end flex-wrap">
                             <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
                         </div>
 
@@ -28,12 +27,12 @@
                     </div>
                 </div>
                 <div class="enviarMensagem">
-                    <InputText type="text" maxlength="200" placeholder="Digite sua mensagem" @keyup.enter="enviarMensagem(mensagem)" v-model="mensagem" :disabled="desabilitado"></InputText>
-                    <Button class="botaoEnviar" :disabled="desabilitado" @click="enviarMensagem(mensagem)" label="Enviar" />
+                    <InputText type="text" maxlength="200" placeholder="Digite sua mensagem" @keyup.enter="enviarMensagem(mensagem)" v-model="mensagem" :disabled="desabilitado || tipoAcesso === 'coordenador' &&  botPodeResponder"></InputText>
+                    <Button class="botaoEnviar" :disabled="desabilitado || tipoAcesso === 'coordenador' &&  botPodeResponder" @click="enviarMensagem(mensagem)" label="Enviar" />
                 </div>
             </div>
-            <div class="menu">
-                <Button class="botaoAssumirConversa" @click="trocarStatusAssumirConversa()" :label="labelBotaoAssumirConversa" />
+            <div class="menu" v-if="conversaSelecionada">
+                <Button :class="estiloBotaoAssumirConversa" @click="trocarStatusAssumirConversa()" :label="labelBotaoAssumirConversa" />
 
                 <div class="categoriasEncontradas">
                     <label for="lastname1">Indicadores encontrados pelo BOT: </label>
@@ -107,14 +106,10 @@ export default {
             mensagem: "",
             historico: [],
             conversas: [{
-                    nome: "Aluno 1",
-                    dataHora: "14:35"
-                },
-                {
-                    nome: "Aluno 2",
-                    dataHora: "11:05"
-                },
-            ],
+                id: 1,
+                nome: "Aluno 1",
+                dataHora: "14:35"
+            }, ],
             conversaSelecionada: "",
             desabilitado: false,
             indicadoresEncontrados: ["teste"],
@@ -122,61 +117,42 @@ export default {
             idAluno: null,
             idCoordenador: null,
             labelBotaoAssumirConversa: "Assumir conversa",
-            assumirConversa: false,
-            connection: null
+            botPodeResponder: null,
+            connection: null,
+            estiloBotaoAssumirConversa: "assumirConversa"
 
         };
     },
     methods: {
         enviarMensagem(textoMensagem) {
-
-            // const messageData = {
-            //     message: this.newMessage,
-            // };
-            // this.connection.send(JSON.stringify(messageData));
-            // this.newMessage = '';
-
             if (!textoMensagem) {
                 this.$toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: "Não foi enviado uma mensagem",
+                    detail: "Não foi digitada uma mensagem",
                     life: 3000
                 });
                 return;
             }
+
             this.desabilitado = true;
             this.salvarMensagem(textoMensagem);
-            let contador = localStorage.getItem('contador');
-            localStorage.setItem('contador', contador++);
 
+            this.connection.send(JSON.stringify({
+                'texto_mensagem': textoMensagem,
+                'quemEnviou': this.tipoAcesso
+            }));
 
-            api({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/perguntas",
-                data: {
-                    //mudar para id
-                    user: "teste",
-                    pergunta: this.mensagem,
-                },
-            }).then(response => {
-                this.salvarMensagem(response.data.mensagem, "bot");
-                this.resgatarHistoricoAluno();
+            this.desabilitado = false;
 
-                this.desabilitado = false;
-            }).catch(erro => {
-                this.$toast.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: erro.response.data.mensagem,
-                    life: 3000
-                });
-            });
-            this.mensagem = null;
-
+            if(this.tipoAcesso === 'aluno'){
+                this.verificarStatusBot(this.idAluno);
+            } else {
+                this.mensagem = null
+            }
         },
         selecionarConversa(conversa) {
-            this.conversaSelecionada = conversa
+            this.conversaSelecionada = conversa;
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/listar-mensagens-por-aluno",
@@ -185,10 +161,6 @@ export default {
                 },
             }).then(response => {
                 this.historico = response.data
-                var divMensagens = document.getElementById("divMensagens");
-                divMensagens.scrollTop = divMensagens.scrollHeight;
-
-
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
@@ -197,6 +169,9 @@ export default {
                     life: 3000
                 });
             });
+
+            this.conectarWebSocket(this.conversaSelecionada.id);
+            this.verificarStatusBot(this.conversaSelecionada.id);
         },
         estiloMensagem(resposta) {
             if (resposta.quem_enviou === 'aluno') {
@@ -205,7 +180,7 @@ export default {
                 return "mensagemBot"
             }
         },
-        salvarMensagem(textoMensagem, bot){
+        salvarMensagem(textoMensagem, bot) {
             const data = new Date();
             const quemEnviou = bot ? bot : this.tipoAcesso;
             const idCoordenador = bot ? null : this.idCoordenador;
@@ -216,12 +191,11 @@ export default {
                     texto_mensagem: textoMensagem,
                     data_hora: data,
                     quem_enviou: quemEnviou,
-                    id_aluno: this.idAluno,
+                    id_aluno: this.idAluno ? this.idAluno : this.conversaSelecionada.id,
                     id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.resgatarHistoricoAluno();
-
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
@@ -231,7 +205,7 @@ export default {
                 });
             });
         },
-        resgatarHistoricoAluno(){
+        resgatarHistoricoAluno() {
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/listar-mensagens-por-aluno",
@@ -240,23 +214,22 @@ export default {
                 },
             }).then(response => {
                 this.historico = response.data
-                var divMensagens = document.getElementById("divMensagens");
-                divMensagens.scrollTop = divMensagens.scrollHeight;
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
                     summary: 'Erro',
-                    detail: erro.response.data.mensagem,
+                    detail: erro,
                     life: 3000
                 });
             });
         },
-        listarTodosAlunos(){
+        listarTodosAlunos() {
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/listar-todos-alunos",
             }).then(response => {
                 //ver depois como pegar a hora
+                console.log(response);
                 this.conversas = response.data.map(conversa => {
                     return {
                         id: conversa.id,
@@ -274,9 +247,108 @@ export default {
                 });
             });
         },
-        trocarStatusAssumirConversa(){
-            this.assumirConversa = !this.assumirConversa;
-            this.labelBotaoAssumirConversa = this.assumirConversa ? "Assumindo conversa" : "Assumir conversa"
+        trocarStatusAssumirConversa() {
+            this.botPodeResponder = !this.botPodeResponder;
+            this.labelBotaoAssumirConversa = !this.botPodeResponder ? "Parar de assumir a conversa" : "Assumir conversa"
+            this.estiloBotaoAssumirConversa = !this.botPodeResponder ? "assumindoConversa" : "assumirConversa"
+
+            api({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/mudar-status-bot",
+                data: {
+                    status: this.botPodeResponder,
+                    id_aluno: this.conversaSelecionada.id
+                },
+            }).then(response => {
+                //ver depois como pegar a hora
+                console.log(response);
+
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data.mensagem,
+                    life: 3000
+                });
+            });
+        },
+        conectarWebSocket(idAluno) {
+            this.connection = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${idAluno}/`);
+
+            this.connection.onopen = (event) => {
+                console.log("Conexão com o WebSocket criada com sucesso", event);
+            }
+
+            this.connection.onmessage = (event) => {
+                console.log("Mensagem recebida do WebSocket:", event.data);
+                const data = JSON.parse(event.data);
+                this.historico.push(data)
+                console.log(data);
+            }
+
+            // this.connection.onopen = (event) => {
+            //     console.log("Conexão com o WebSocket criada com sucesso", event);
+            // }
+
+            // this.connection.onclose = (event) => {
+            //     console.log("Conexão com o WebSocket fechada", event);
+            // }
+
+            // this.connection.onerror = (event) => {
+            //     console.error("Erro no WebSocket", event);
+            // }
+        },
+        verificarStatusBot(idAluno) {
+            api({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/verificar-status-bot",
+                params: {
+                    id_aluno: idAluno ? idAluno : this.conversaSelecionada.id
+                },
+            }).then(response => {
+                this.botPodeResponder = response.data.bot_pode_responder;
+                console.log(this.botPodeResponder);
+                if (this.botPodeResponder && this.tipoAcesso === 'aluno') {
+                    this.desabilitado = true;
+                    this.enviarMensagemGemini();
+                } else {
+                    this.mensagem = null;
+                    this.labelBotaoAssumirConversa = !this.botPodeResponder ? "Parar de assumir a conversa" : "Assumir conversa"
+                    this.estiloBotaoAssumirConversa = !this.botPodeResponder ? "assumindoConversa" : "assumirConversa"
+                }
+
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro,
+                    life: 3000
+                });
+                
+            });
+        },
+        enviarMensagemGemini() {
+            console.log('mensagem', this.mensagem);
+            api({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/perguntas",
+                data: {
+                    user: "teste",
+                    pergunta: this.mensagem,
+                },
+            }).then(response => {
+                this.salvarMensagem(response.data.mensagem, "bot");
+                this.resgatarHistoricoAluno();
+                this.desabilitado = false;
+                this.mensagem = null;
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data.mensagem,
+                    life: 3000
+                });
+            });
         }
     },
     computed: {
@@ -286,35 +358,21 @@ export default {
         localStorage.setItem('contador', 0)
         document.getElementById('conversas').classList.toggle('active');
         this.tipoAcesso = localStorage.getItem('tipoAcesso');
-        if(this.tipoAcesso === 'aluno'){
+
+        if (this.tipoAcesso === 'aluno') {
             this.idAluno = localStorage.getItem('id');
             this.resgatarHistoricoAluno();
+            this.conectarWebSocket(this.idAluno);
         } else {
             this.idCoordenador = localStorage.getItem('id');
             this.listarTodosAlunos();
         }
-
-        console.log("Iniciando conexão com o web socket");
-        this.connection = new WebSocket(`ws://127.0.0.1:8000/ws/chat/teste/`);
-
-        this.connection.onmessage = (event) => {
-            console.log("Mensagem recebida do WebSocket:", event.data);
-            const data = JSON.parse(event.data);
-            this.historico.push(data.message);
-        }
-
-        this.connection.onopen = (event) => {
-            console.log("Conexão com o WebSocket criada com sucesso", event);
-        }
-
-        this.connection.onclose = (event) => {
-            console.log("Conexão com o WebSocket fechada", event);
-        }
-
-        this.connection.onerror = (event) => {
-            console.error("Erro no WebSocket", event);
-        }
-    }
+    },
+    beforeDestroy() {
+        // this.connection.onclose = (event) => {
+        //     console.log("Conexão com o WebSocket fechada", event);
+        // }
+    },
 }
 </script>
 
@@ -398,7 +456,7 @@ button {
     border: 1px solid #E9EDEF;
 }
 
-.conversasAluno{
+.conversasAluno {
     background-color: #F4F8F9;
     height: 30rem;
     width: 100%;
@@ -496,8 +554,29 @@ button {
     color: white;
 }
 
-.botaoAssumirConversa {
-    background-color: #45A8BF;
+.categoriasEncontradas {
+    margin: 1rem;
+    margin-top: 3rem;
+    font-family: 'Poppins';
+    font-size: 13px;
+    color: #6B7C85
+}
+
+.assumindoConversa {
+    background-color: #fd0000b4;
+    color: white;
+    display: flex;
+    justify-content: center;
+    height: 3.5rem;
+    width: 75%;
+    font-family: 'Poppins';
+    font-size: 13px;
+    margin-left: 15%;
+    margin-top: 1rem;
+}
+
+.assumirConversa {
+    background-color: #0e810e9c;
     color: white;
     display: flex;
     justify-content: center;
@@ -507,13 +586,5 @@ button {
     font-size: 13px;
     margin-left: 25%;
     margin-top: 1rem;
-}
-
-.categoriasEncontradas {
-    margin: 1rem;
-    margin-top: 3rem;
-    font-family: 'Poppins';
-    font-size: 13px;
-    color: #6B7C85
 }
 </style>
