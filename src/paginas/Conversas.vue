@@ -1,74 +1,149 @@
 <template>
-<div id="estrutura">
-    <MenuLateral></MenuLateral>
-    <BarraNavegacao></BarraNavegacao>
+    <div id="estrutura">
+        <MenuLateral></MenuLateral>
+        <BarraNavegacao></BarraNavegacao>
 
-    <div id="container" v-if="tipoAcesso === 'coordenador'">
-        <div class="flex">
-            <div class="chats">
-                <div class="flex justify-content-between conversa-item" v-for="conversa in conversas" @click="selecionarConversa(conversa)">
-                    <label class="cursor-pointer">{{conversa.nome}}</label>
-                    <label class="cursor-pointer" for="">{{conversa.dataHora}}</label>
-                </div>
-            </div>
-            <div class="conversas">
-                <div class="tituloConversa">
-                    {{ conversaSelecionada.nome }}
-                </div>
-                <div id="divMensagens" class="mensagens">
-                    <div v-for="resposta in historico">
-                        <div v-if="resposta.quem_enviou === 'bot' || resposta.quemEnviou === 'coordenador'" class="flex justify-content-end flex-wrap">
-                            <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
-                        </div>
-
-                        <div v-else class="flex justify-content-start flex-wrap">
-                            <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
-                        </div>
+        <div id="container" v-if="tipoAcesso === 'coordenador'">
+            <div class="flex">
+                <div class="chats">
+                    <div class="flex justify-content-between conversa-item" v-for="conversa in conversas"
+                        @click="selecionarConversa(conversa)">
+                        <label class="cursor-pointer">{{ conversa.nome }}</label>
+                        <label class="cursor-pointer" for="">{{ conversa.dataHora }}</label>
                     </div>
                 </div>
-                <div class="enviarMensagem">
-                    <InputText type="text" maxlength="200" placeholder="Digite sua mensagem" @keyup.enter="enviarMensagem(mensagem)" v-model="mensagem" :disabled="desabilitado || tipoAcesso === 'coordenador' &&  botPodeResponder"></InputText>
-                    <Button class="botaoEnviar" :disabled="desabilitado || tipoAcesso === 'coordenador' &&  botPodeResponder" @click="enviarMensagem(mensagem)" label="Enviar" />
+                <div class="conversas">
+                    <div class="tituloConversa">
+                        {{ conversaSelecionada.nome }}
+                    </div>
+                    <div id="divMensagens" class="mensagens">
+                        <div v-for="resposta in historico">
+                            <div v-if="resposta.quem_enviou === 'bot' || resposta.quem_enviou === 'coordenador'"
+                                class="flex justify-content-end flex-wrap">
+                                <label :class="estiloMensagem(resposta)">{{ resposta.texto_mensagem }}</label>
+                            </div>
+
+                            <div v-else class="flex justify-content-start flex-wrap">
+                                <label :class="estiloMensagem(resposta)">{{ resposta.texto_mensagem }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="enviarMensagem">
+                        <InputText type="text" maxlength="200" placeholder="Digite sua mensagem"
+                            @keyup.enter="enviarMensagem(mensagem)" v-model="mensagem"
+                            :disabled="desabilitado || tipoAcesso === 'coordenador' && botPodeResponder"></InputText>
+                        <Button class="botaoEnviar"
+                            :disabled="desabilitado || tipoAcesso === 'coordenador' && botPodeResponder"
+                            @click="enviarMensagem(mensagem)" label="Enviar" />
+                    </div>
+                </div>
+                <div class="menu" v-if="conversaSelecionada">
+                    <Button :class="estiloBotaoAssumirConversa" @click="trocarStatusAssumirConversa()"
+                        :label="labelBotaoAssumirConversa" />
+
+                    <div class="categoriasEncontradas">
+                        <label for="lastname1">Indicadores encontrados pelo BOT: </label>
+                        <AutoComplete v-model="indicadoresEncontrados" multiple />
+                    </div>
                 </div>
             </div>
-            <div class="menu" v-if="conversaSelecionada">
-                <Button :class="estiloBotaoAssumirConversa" @click="trocarStatusAssumirConversa()" :label="labelBotaoAssumirConversa" />
 
-                <div class="categoriasEncontradas">
-                    <label for="lastname1">Indicadores encontrados pelo BOT: </label>
-                    <AutoComplete v-model="indicadoresEncontrados" multiple />
+        </div>
+
+        <div id="container" v-else>
+            <div class="flex">
+                <div class="conversasAluno">
+                    <div class="tituloConversa">
+                        Chatbot CoordenaAgora
+                    </div>
+                    <div class="mensagens ">
+                        <div v-for="resposta in historico">
+                            <div v-if="resposta.quem_enviou === 'bot' || resposta.quem_enviou === 'coordenador'"
+                                class="flex justify-content-start flex-wrap">
+                                <label :class="estiloMensagem(resposta)">{{ resposta.texto_mensagem }}</label>
+                            </div>
+
+                            <div v-else class="flex justify-content-end flex-wrap">
+                                <label :class="estiloMensagem(resposta)">{{ resposta.texto_mensagem }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="enviarMensagem">
+                        <InputText type="text" maxlength="200" placeholder="Digite sua mensagem"
+                            @keyup.enter="enviarMensagem(mensagem)" v-model="mensagem" :disabled="desabilitado">
+                        </InputText>
+                        <Button class="botaoEnviar" :disabled="desabilitado" @click="enviarMensagem(mensagem)"
+                            label="Enviar" />
+                    </div>
                 </div>
             </div>
         </div>
-
+        <Toast></Toast>
     </div>
 
-    <div id="container" v-else>
-        <div class="flex">
-            <div class="conversasAluno">
-                <div class="tituloConversa">
-                    Chatbot CoordenaAgora
-                </div>
-                <div class="mensagens ">
-                    <div v-for="resposta in historico">
-                        <div v-if="resposta.quem_enviou === 'bot'" class="flex justify-content-end flex-wrap">
-                            <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
-                        </div>
 
-                        <div v-else class="flex justify-content-start flex-wrap">
-                            <label :class="estiloMensagem(resposta)">{{resposta.texto_mensagem}}</label>
-                        </div>
-                    </div>
+    <Dialog v-model:visible="visible" :header=tituloEncaminhamentoAgendamento :style="{ width: '25rem' }" modal>
+        <div v-if="!agendamento && !encaminhamento">
+            <p class="m-2" style="text-align: justify; justify-content: center">
+            Nosso chatbot parece estar com dificuldades para ajudá-lo. Por favor, selecione uma das opções abaixo para
+            continuar seu atendimento.</p>
+        </div>
+        <Accordion v-if="!agendamento && !encaminhamento">
+            <AccordionTab header="Encaminhamento">
+                <p class="m-0" style="text-align: justify; justify-content: center">
+                    Caso você tenha dúvidas relacionadas a questões administrativas, biblioteca, infraestrutura e
+                    assuntos acadêmicos gerais, você pode realizar um <b>encaminhamento</b>. Um e-mail será enviado ao
+                    setor responsável com a sua dúvida e seus dados, e você será adicionado em cópia para
+                    acompanhamento.
+                </p>
+                <div class="flex justify-content-center">
+                    <Button label="Quero realizar um encaminhamento" class="mt-2" severity="info" style=" background-color: #45A8BF; color: white;" @click="realizarEncaminhamento" />
                 </div>
-                <div class="enviarMensagem">
-                    <InputText type="text" maxlength="200" placeholder="Digite sua mensagem" @keyup.enter="enviarMensagem(mensagem)" v-model="mensagem" :disabled="desabilitado"></InputText>
-                    <Button class="botaoEnviar" :disabled="desabilitado" @click="enviarMensagem(mensagem)" label="Enviar" />
+
+            </AccordionTab>
+            <AccordionTab header="Agendamento">
+                <p class="m-0" style="text-align: justify; justify-content: center">
+                    Caso você tenha problemas que exijam a atenção do coordenador de curso, como planejamento e
+                    problemas acadêmicos, orientação profissional, problemas com professores ou colegas e casos
+                    especiais, você pode realizar um <b>agendamento</b> para tratar desses assuntos com o seu
+                    coordenador de curso. Um e-mail será enviado ao coordenador do seu curso com a sua dúvida e seus
+                    dados, e você será adicionado em cópia para acompanhamento
+                </p>
+                <div class="flex justify-content-center">
+                    <Button label="Quero realizar um agendamento" class="mt-2" severity="info" style=" background-color: #45A8BF; color: white;" @click="realizarAgendamento" />
                 </div>
+            </AccordionTab>
+        </Accordion>
+
+        <div v-else-if="encaminhamento">
+            <label>Setor responsável:</label>
+            <Dropdown v-model="setorSelecionado" :options="setores" optionLabel="nome" placeholder="Selecione um setor"
+                class="w-full md:w-14rem" />
+            <div class="mt-3">
+                <label>Dúvida:</label>
+                <Textarea v-model="duvida" rows="5" cols="30" />
+            </div>
+            <div class="flex justify-content-end">
+                <Button label="Voltar" class="m-2" severity="info" @click="voltar" style=" background-color: #45A8BF; color: white;" />
+                <Button label="Enviar" class="m-2" @click="enviarEncaminhamento" />
             </div>
         </div>
-    </div>
-    <Toast></Toast>
-</div>
+
+        <div v-else="agendamento">
+            <label>Dúvida:</label>
+            <Textarea v-model="duvida" rows="5" cols="30" />
+
+            <div class="flex justify-content-end">
+                <Button label="Voltar" class="m-2" @click="voltar" style=" background-color: #45A8BF; color: white;" />
+                <Button label="Enviar" class="m-2" severity="info" @click="enviarAgendamento" />
+            </div>
+
+        </div>
+    </Dialog>
+
+    <Dialog v-model:visible="carregando" modal :closable="false" header="Aguarde" :style="{ width: '25rem' }">
+        <span class="p-text-secondary block mb-5">Aguarde enquanto enviamos o email.</span>
+    </Dialog>
 </template>
 
 <script>
@@ -77,8 +152,15 @@ import MenuLateral from '@/components/MenuLateral.vue'
 import InputText from 'primevue/inputtext'
 import Button from 'primevue/button'
 import Toast from 'primevue/toast'
+import Dialog from 'primevue/dialog'
 import AutoComplete from 'primevue/autocomplete'
 import BarraNavegacao from '@/components/BarraNavegacao.vue'
+import Accordion from 'primevue/accordion';
+import AccordionTab from 'primevue/accordiontab';
+import Dropdown from 'primevue/dropdown';
+import Textarea from 'primevue/textarea';
+
+
 
 import api from "@/plugins/axios";
 import {
@@ -93,7 +175,13 @@ export default {
         BarraNavegacao,
         Button,
         Toast,
-        AutoComplete
+        AutoComplete,
+        Dialog,
+        Accordion,
+        AccordionTab,
+        AutoComplete,
+        Textarea,
+        Dropdown
 
     },
     props: [],
@@ -109,7 +197,7 @@ export default {
                 id: 1,
                 nome: "Aluno 1",
                 dataHora: "14:35"
-            }, ],
+            },],
             conversaSelecionada: "",
             desabilitado: false,
             indicadoresEncontrados: ["teste"],
@@ -119,7 +207,16 @@ export default {
             labelBotaoAssumirConversa: "Assumir conversa",
             botPodeResponder: null,
             connection: null,
-            estiloBotaoAssumirConversa: "assumirConversa"
+            estiloBotaoAssumirConversa: "assumirConversa",
+            contador: 0,
+            visible: false,
+            encaminhamento: false,
+            agendamento: false,
+            setorSelecionado: null,
+            setores: [],
+            duvida: null,
+            tituloEncaminhamentoAgendamento: "O que você gostaria de fazer?",
+            carregando: false,
 
         };
     },
@@ -139,19 +236,25 @@ export default {
             this.salvarMensagem(textoMensagem);
 
             this.connection.send(JSON.stringify({
-                'texto_mensagem': textoMensagem,
-                'quemEnviou': this.tipoAcesso
+                'message': textoMensagem,
+                'quem_enviou': this.tipoAcesso
             }));
 
             this.desabilitado = false;
 
-            if(this.tipoAcesso === 'aluno'){
+            if (this.tipoAcesso === 'aluno') {
                 this.verificarStatusBot(this.idAluno);
             } else {
                 this.mensagem = null
             }
         },
         selecionarConversa(conversa) {
+            if (this.connection) {
+                this.connection.onclose = (event) => {
+                    console.log("Conexão com o WebSocket fechada", event);
+                }
+            }
+
             this.conversaSelecionada = conversa;
             api({
                 method: "get",
@@ -195,7 +298,6 @@ export default {
                     id_coordenador: idCoordenador
                 },
             }).then(response => {
-                this.resgatarHistoricoAluno();
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
@@ -273,30 +375,36 @@ export default {
             });
         },
         conectarWebSocket(idAluno) {
-            this.connection = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${idAluno}/`);
+            if (!this.connection) {
+                this.connection = new WebSocket(`ws://127.0.0.1:8000/ws/chat/${idAluno}/`);
 
-            this.connection.onopen = (event) => {
-                console.log("Conexão com o WebSocket criada com sucesso", event);
+                this.connection.onopen = (event) => {
+                    console.log("Conexão com o WebSocket criada com sucesso", event);
+                }
+
+                this.connection.onmessage = (event) => {
+                    console.log("Mensagem recebida do WebSocket:", event.data);
+                    const data = JSON.parse(event.data);
+                    const mensagem = {
+                        texto_mensagem: data.message,
+                        quem_enviou: data.quem_enviou
+                    }
+                    this.historico.push(mensagem)
+                }
+
+                // this.connection.onopen = (event) => {
+                //     console.log("Conexão com o WebSocket criada com sucesso", event);
+                // }
+
+                // this.connection.onclose = (event) => {
+                //     console.log("Conexão com o WebSocket fechada", event);
+                // }
+
+                // this.connection.onerror = (event) => {
+                //     console.error("Erro no WebSocket", event);
+                // }
+
             }
-
-            this.connection.onmessage = (event) => {
-                console.log("Mensagem recebida do WebSocket:", event.data);
-                const data = JSON.parse(event.data);
-                this.historico.push(data)
-                console.log(data);
-            }
-
-            // this.connection.onopen = (event) => {
-            //     console.log("Conexão com o WebSocket criada com sucesso", event);
-            // }
-
-            // this.connection.onclose = (event) => {
-            //     console.log("Conexão com o WebSocket fechada", event);
-            // }
-
-            // this.connection.onerror = (event) => {
-            //     console.error("Erro no WebSocket", event);
-            // }
         },
         verificarStatusBot(idAluno) {
             api({
@@ -307,7 +415,6 @@ export default {
                 },
             }).then(response => {
                 this.botPodeResponder = response.data.bot_pode_responder;
-                console.log(this.botPodeResponder);
                 if (this.botPodeResponder && this.tipoAcesso === 'aluno') {
                     this.desabilitado = true;
                     this.enviarMensagemGemini();
@@ -324,21 +431,31 @@ export default {
                     detail: erro,
                     life: 3000
                 });
-                
+
             });
         },
         enviarMensagemGemini() {
-            console.log('mensagem', this.mensagem);
+            let contador = sessionStorage.getItem('contador');
+            contador = Number(contador) + 1;
+            sessionStorage.setItem('contador', contador)
+            if (contador >= 6) {
+                this.visible = true;
+            }
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/perguntas",
                 data: {
-                    user: "teste",
+                    user: this.idAluno,
                     pergunta: this.mensagem,
+                    historico: this.historico,
+                    contador: sessionStorage.getItem('contador')
                 },
             }).then(response => {
+                this.connection.send(JSON.stringify({
+                    'message': response.data.mensagem,
+                    'quem_enviou': "bot"
+                }));
                 this.salvarMensagem(response.data.mensagem, "bot");
-                this.resgatarHistoricoAluno();
                 this.desabilitado = false;
                 this.mensagem = null;
             }).catch(erro => {
@@ -349,13 +466,126 @@ export default {
                     life: 3000
                 });
             });
-        }
+        },
+        realizarEncaminhamento() {
+            this.encaminhamento = true;
+            this.tituloEncaminhamentoAgendamento = "Encaminhamento"
+
+            api({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/visualizar-setores/",
+
+            }).then(response => {
+                this.setores = response.data;
+            }).catch(erro => { });
+
+        },
+        realizarAgendamento() {
+            this.agendamento = true;
+            this.tituloEncaminhamentoAgendamento = "Agendamento"
+        },
+        voltar() {
+            this.encaminhamento = false;
+            this.agendamento = false;
+            this.tituloEncaminhamentoAgendamento = "O que você gostaria de fazer?"
+            this.setorSelecionado = null;
+            this.duvida = null;
+        },
+        enviarEncaminhamento() {
+            if (!this.duvida) {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Campos não preenchidos',
+                    detail: "Não foi preenchido o campo dúvida",
+                    life: 3000
+                });
+                return;
+            }
+            if (!this.setorSelecionado) {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Campos não preenchidos',
+                    detail: "Não foi preenchido o campo setor",
+                    life: 3000
+                });
+                return;
+            }
+            this.carregando = true;
+            api({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/encaminhamento",
+                data: {
+                    id_aluno: this.idAluno,
+                    duvida: this.duvida,
+                    setor: this.setorSelecionado,
+                },
+            }).then(response => {
+                this.$toast.add({
+                    severity: 'success',
+                    summary: 'Encaminhamento',
+                    detail: response.data.mensagem,
+                    life: 3000
+                });
+                this.carregando = false;
+                this.visible = false;
+                this.agendamento = false;
+                this.encaminhamento = false;
+                this.tituloEncaminhamentoAgendamento = "O que você gostaria de fazer?"
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data.mensagem,
+                    life: 3000
+                });
+            });
+        },
+        enviarAgendamento() {
+            if (!this.duvida) {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Campos não preenchidos',
+                    detail: "Não foi preenchido o campo dúvida",
+                    life: 3000
+                });
+                return;
+            }
+            this.carregando = true;
+            api({
+                method: "post",
+                url: "http://127.0.0.1:8000/api/agendamento",
+                data: {
+                    id_aluno: this.idAluno,
+                    duvida: this.duvida,
+                },
+            }).then(response => {
+                this.$toast.add({
+                    severity: 'success',
+                    summary: 'Agendamento',
+                    detail: response.data.mensagem,
+                    life: 3000
+                });
+                this.carregando = false;
+                this.visible = false;
+                this.agendamento = false;
+                this.encaminhamento = false;
+                this.tituloEncaminhamentoAgendamento = "O que você gostaria de fazer?"
+                this.duvida = null;
+            }).catch(erro => {
+                this.$toast.add({
+                    severity: 'error',
+                    summary: 'Erro',
+                    detail: erro.response.data.mensagem,
+                    life: 3000
+                });
+            });
+        },
     },
     computed: {
 
     },
     mounted() {
-        localStorage.setItem('contador', 0)
+        sessionStorage.setItem('contador', Number(0))
         document.getElementById('conversas').classList.toggle('active');
         this.tipoAcesso = localStorage.getItem('tipoAcesso');
 
@@ -368,10 +598,11 @@ export default {
             this.listarTodosAlunos();
         }
     },
-    beforeDestroy() {
-        // this.connection.onclose = (event) => {
-        //     console.log("Conexão com o WebSocket fechada", event);
-        // }
+    destroyed() {
+        alert()
+        this.connection.onclose = (event) => {
+            console.log("Conexão com o WebSocket fechada", event);
+        }
     },
 }
 </script>
@@ -545,6 +776,7 @@ button {
     flex-wrap: wrap;
     margin-top: 1rem;
     margin-right: 1rem;
+    margin-left: 1rem;
     flex-wrap: wrap;
 
 }
