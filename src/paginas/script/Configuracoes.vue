@@ -8,12 +8,6 @@
             <router-link to="/adicionar-script">
                 <Button id="botao" label="Adicionar script" />
             </router-link>
-            <div class="flex justify-content-end">
-                <IconField iconPosition="left">
-                    <InputIcon class="pi pi-search"> </InputIcon>
-                    <InputText v-model="pesquisa" placeholder="Pesquisar" />
-                </IconField>
-            </div>
         </div>
         <div class="m-4 p-4 shadow-1	">
             <DataTable :value="scripts" tableStyle="min-width: 50rem">

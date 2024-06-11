@@ -109,18 +109,13 @@ export default {
                     corpo: "02"
                 },
                 {
-                    titulo: "Número de pessoas cadastradas",
+                    titulo: "Número de alunos cadastradas",
                     corpo: "32"
                 },
                 {
-                    titulo: "Número de conversas com o assunto:",
-                    categoria: "Validação de horas cadastradas",
+                    titulo: "Alunos vieram falar mais sobre:",
+                    categoria: "Validação de horas complementares",
                     corpo: "45"
-                },
-                {
-                    titulo: "Número de conversas com o assunto:",
-                    categoria: "Feedback sobre o curso",
-                    corpo: "5"
                 },
 
             ],

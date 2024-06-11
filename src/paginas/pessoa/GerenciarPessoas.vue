@@ -8,12 +8,6 @@
             <router-link to="/adicionar-pessoa">
                 <Button id="botao" label="Adicionar pessoa" />
             </router-link>
-            <div class="flex justify-content-end">
-                <IconField iconPosition="left">
-                    <InputIcon class="pi pi-search"> </InputIcon>
-                    <InputText v-model="pesquisa" placeholder="Pesquisar" />
-                </IconField>
-            </div>
         </div>
         <div class="m-4 p-4 shadow-1	">
             <DataTable :value="pessoas" tableStyle="min-width: 50rem">

@@ -8,12 +8,6 @@
                 <router-link to="/adicionar-setor">
                     <Button id="botao" label="Adicionar setor" />
                 </router-link>
-                <div class="flex justify-content-end">
-                    <IconField iconPosition="left">
-                        <InputIcon class="pi pi-search"> </InputIcon>
-                        <InputText v-model="pesquisa" placeholder="Pesquisar" />
-                    </IconField>
-                </div>
             </div>
             <div class="m-4 p-4 shadow-1	">
                 <DataTable :value="setores" tableStyle="min-width: 50rem">
@@ -28,9 +22,6 @@
                             <Button icon="pi pi-trash" outlined rounded severity="danger" @click="deletar(slotProps.data)" />
                         </template>
                     </Column>
-                    <!-- <Column field="name" header="Name"></Column> -->
-                    <!-- <Column field="category" header="Category"></Column> -->
-                    <!-- <Column field="quantity" header="Quantity"></Column> -->
                 </DataTable>
             </div>
         </div>

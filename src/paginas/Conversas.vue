@@ -41,10 +41,10 @@
                     <Button :class="estiloBotaoAssumirConversa" @click="trocarStatusAssumirConversa()"
                         :label="labelBotaoAssumirConversa" />
 
-                    <div class="categoriasEncontradas">
+                    <!-- <div class="categoriasEncontradas">
                         <label for="lastname1">Indicadores encontrados pelo BOT: </label>
                         <AutoComplete v-model="indicadoresEncontrados" multiple />
-                    </div>
+                    </div> -->
                 </div>
             </div>
 
@@ -81,69 +81,11 @@
         <Toast></Toast>
     </div>
 
-
-    <Dialog v-model:visible="visible" :header=tituloEncaminhamentoAgendamento :style="{ width: '25rem' }" modal>
-        <div v-if="!agendamento && !encaminhamento">
-            <p class="m-2" style="text-align: justify; justify-content: center">
-            Nosso chatbot parece estar com dificuldades para ajudá-lo. Por favor, selecione uma das opções abaixo para
-            continuar seu atendimento.</p>
-        </div>
-        <Accordion v-if="!agendamento && !encaminhamento">
-            <AccordionTab header="Encaminhamento">
-                <p class="m-0" style="text-align: justify; justify-content: center">
-                    Caso você tenha dúvidas relacionadas a questões administrativas, biblioteca, infraestrutura e
-                    assuntos acadêmicos gerais, você pode realizar um <b>encaminhamento</b>. Um e-mail será enviado ao
-                    setor responsável com a sua dúvida e seus dados, e você será adicionado em cópia para
-                    acompanhamento.
-                </p>
-                <div class="flex justify-content-center">
-                    <Button label="Quero realizar um encaminhamento" class="mt-2" severity="info" style=" background-color: #45A8BF; color: white;" @click="realizarEncaminhamento" />
-                </div>
-
-            </AccordionTab>
-            <AccordionTab header="Agendamento">
-                <p class="m-0" style="text-align: justify; justify-content: center">
-                    Caso você tenha problemas que exijam a atenção do coordenador de curso, como planejamento e
-                    problemas acadêmicos, orientação profissional, problemas com professores ou colegas e casos
-                    especiais, você pode realizar um <b>agendamento</b> para tratar desses assuntos com o seu
-                    coordenador de curso. Um e-mail será enviado ao coordenador do seu curso com a sua dúvida e seus
-                    dados, e você será adicionado em cópia para acompanhamento
-                </p>
-                <div class="flex justify-content-center">
-                    <Button label="Quero realizar um agendamento" class="mt-2" severity="info" style=" background-color: #45A8BF; color: white;" @click="realizarAgendamento" />
-                </div>
-            </AccordionTab>
-        </Accordion>
-
-        <div v-else-if="encaminhamento">
-            <label>Setor responsável:</label>
-            <Dropdown v-model="setorSelecionado" :options="setores" optionLabel="nome" placeholder="Selecione um setor"
-                class="w-full md:w-14rem" />
-            <div class="mt-3">
-                <label>Dúvida:</label>
-                <Textarea v-model="duvida" rows="5" cols="30" />
-            </div>
-            <div class="flex justify-content-end">
-                <Button label="Voltar" class="m-2" severity="info" @click="voltar" style=" background-color: #45A8BF; color: white;" />
-                <Button label="Enviar" class="m-2" @click="enviarEncaminhamento" />
-            </div>
-        </div>
-
-        <div v-else="agendamento">
-            <label>Dúvida:</label>
-            <Textarea v-model="duvida" rows="5" cols="30" />
-
-            <div class="flex justify-content-end">
-                <Button label="Voltar" class="m-2" @click="voltar" style=" background-color: #45A8BF; color: white;" />
-                <Button label="Enviar" class="m-2" severity="info" @click="enviarAgendamento" />
-            </div>
-
-        </div>
-    </Dialog>
-
-    <Dialog v-model:visible="carregando" modal :closable="false" header="Aguarde" :style="{ width: '25rem' }">
-        <span class="p-text-secondary block mb-5">Aguarde enquanto enviamos o email.</span>
-    </Dialog>
+    <Dialog v-model:visible="visible" modal header="" :style="{ width: '25rem' }">
+        <span class="p-text-secondary block mb-5" style="text-align: justify;">Desculpe, nosso chatbot encontrou dificuldades
+         em ajudá-lo. Foi enviado um email ao setor responsável com a sua solicitação. Verifique seu
+          e-mail para mais detalhes.</span>
+    </Dialog> 
 </template>
 
 <script>
@@ -210,14 +152,6 @@ export default {
             estiloBotaoAssumirConversa: "assumirConversa",
             contador: 0,
             visible: false,
-            encaminhamento: false,
-            agendamento: false,
-            setorSelecionado: null,
-            setores: [],
-            duvida: null,
-            tituloEncaminhamentoAgendamento: "O que você gostaria de fazer?",
-            carregando: false,
-
         };
     },
     methods: {
@@ -336,7 +270,6 @@ export default {
                     return {
                         id: conversa.id,
                         nome: conversa.nome,
-                        dataHora: "15:00"
                     }
                 })
 
@@ -435,12 +368,6 @@ export default {
             });
         },
         enviarMensagemGemini() {
-            let contador = sessionStorage.getItem('contador');
-            contador = Number(contador) + 1;
-            sessionStorage.setItem('contador', contador)
-            if (contador >= 6) {
-                this.visible = true;
-            }
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/perguntas",
@@ -448,7 +375,7 @@ export default {
                     user: this.idAluno,
                     pergunta: this.mensagem,
                     historico: this.historico,
-                    contador: sessionStorage.getItem('contador')
+                    id_aluno: this.idAluno
                 },
             }).then(response => {
                 this.connection.send(JSON.stringify({
@@ -458,6 +385,9 @@ export default {
                 this.salvarMensagem(response.data.mensagem, "bot");
                 this.desabilitado = false;
                 this.mensagem = null;
+                if(response.data.mensagem == "A conversa foi finalizada"){
+                    this.visible = true;
+                }
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
