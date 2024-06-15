@@ -78,17 +78,21 @@ export default {
             }).catch(erro => {});
         },
         gerarRelatorio(){
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/relatorio",
                 data: {
-                    dataInicial: this.dataInicial,
-                    dataFinal: this.dataFinal,
-                    indicadores: this.indicadoresSelecionados
+                    data_inicial: this.dataInicial,
+                    data_final: this.dataFinal,
+                    indicadores: this.indicadoresSelecionados,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
-                this.indicadores = response.data
-            }).catch(erro => {});
+
+            }).catch(erro => {
+                
+            });
         }
 
 
