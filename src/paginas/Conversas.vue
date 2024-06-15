@@ -82,9 +82,8 @@
     </div>
 
     <Dialog v-model:visible="visible" modal header="" :style="{ width: '25rem' }">
-        <span class="p-text-secondary block mb-5" style="text-align: justify;">Desculpe, nosso chatbot encontrou dificuldades
-         em ajudá-lo. Foi enviado um email ao setor responsável com a sua solicitação. Verifique seu
-          e-mail para mais detalhes.</span>
+        <span class="p-text-secondary block mb-5" style="text-align: justify;">O chatbot atingiu o limite de interações para essa conversa, seu atendimento
+            será {{tipoRepasse}}. Você receberá um email com a solicitação, favor aguardar retorno da pessoa responsável em até 48 horas. </span>
     </Dialog> 
 </template>
 
@@ -152,6 +151,7 @@ export default {
             estiloBotaoAssumirConversa: "assumirConversa",
             contador: 0,
             visible: false,
+            tipoRepasse: "",
         };
     },
     methods: {
@@ -167,7 +167,7 @@ export default {
             }
 
             this.desabilitado = true;
-            this.salvarMensagem(textoMensagem);
+            // this.salvarMensagem(textoMensagem);
 
             this.connection.send(JSON.stringify({
                 'message': textoMensagem,
@@ -368,6 +368,7 @@ export default {
             });
         },
         enviarMensagemGemini() {
+            const data = new Date();
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/perguntas",
@@ -375,16 +376,23 @@ export default {
                     user: this.idAluno,
                     pergunta: this.mensagem,
                     historico: this.historico,
-                    id_aluno: this.idAluno
+                    id_aluno: this.idAluno,
+                    data_hora: data,
+                    id_coordenador: this.idCoordenador
                 },
             }).then(response => {
                 this.connection.send(JSON.stringify({
                     'message': response.data.mensagem,
                     'quem_enviou': "bot"
                 }));
-                this.salvarMensagem(response.data.mensagem, "bot");
+                // this.salvarMensagem(response.data.mensagem, "bot");
                 this.desabilitado = false;
                 this.mensagem = null;
+                if(response.data.tipo.tipo === "encaminhamento"){
+                    this.tipoRepasse = "encaminhado para o setor " + response.data.tipo.setor
+                } else {
+                    this.tipoRepasse = "encaminhado para agendamento com o coordenador"
+                }
                 if(response.data.mensagem == "A conversa foi finalizada"){
                     this.visible = true;
                 }
