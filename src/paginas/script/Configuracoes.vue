@@ -62,20 +62,9 @@ export default {
     props: [],
     data() {
         return {
-            scripts: [{
-                    nome: "Criação do assistente",
-                    descricao: "Você é Sam, um simpático Assistente que trabalha para o CoordenaAgora. CoordenaAgora é um plataforma que auxilia..."
-                },
-                {
-                    nome: "Validação de horas complementares",
-                    descricao: "Caso o aluno precise validar horas complementares, responda que deve ser aberto um requerimento na secretaria e após..."
-                },
-                {
-                    nome: "Finalizar conversa",
-                    descricao: "Caso o usuário não possua mais dúvidas, diga que foi um prazer ajudá-lo e finalize a conversa"
-                }
+            scripts: [
             ],
-            pesquisa: null
+            pesquisa: null,
 
         };
     },
@@ -101,9 +90,13 @@ export default {
             }).catch(erro => {});
         },
         listar() {
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/scripts",
+                params: {
+                    id_coordenador: idCoordenador
+                },
 
             }).then(response => {
                 this.scripts = response.data;
@@ -117,6 +110,7 @@ export default {
     mounted() {
         document.getElementById('configuracoes').classList.toggle('active');
         this.listar();
+
     }
 
 }

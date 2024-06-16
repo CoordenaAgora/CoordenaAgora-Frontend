@@ -67,11 +67,13 @@ export default {
     },
     methods: {
         buscarIndicadoresPorNome(filtro) {
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/indicadores-por-nome",
                 params: {
-                    nome: filtro.query
+                    nome: filtro.query,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.indicadores = response.data

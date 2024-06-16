@@ -104,12 +104,14 @@ export default {
             const idsPessoasSelecionadas = this.pessoasSelecionadas.map(pessoa => {
                 return pessoa.id
             })
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "put",
                 url: "http://127.0.0.1:8000/api/editar-setores/" + this.id,
                 data: {
                     nome: this.nome,
                     pessoas: idsPessoasSelecionadas,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.$router.push('/setores')

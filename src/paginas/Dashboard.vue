@@ -126,9 +126,14 @@ export default {
     },
     methods: {
         listarPessoas() {
+            const idCoordenador = localStorage.getItem('id');
+
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/pessoas",
+                params: {
+                    id_coordenador: idCoordenador
+                },
 
             }).then(response => {
                 this.pessoas = response.data;
@@ -136,9 +141,14 @@ export default {
             }).catch(erro => {});
         },
         listarSetores() {
+            const idCoordenador = localStorage.getItem('id');
+
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/visualizar-setores/",
+                params: {
+                    id_coordenador: idCoordenador
+                },
 
             }).then(response => {
                 this.setores = response.data;

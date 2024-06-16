@@ -60,17 +60,20 @@ export default {
         return {
             nome: this.$route.params.nome,
             descricao: this.$route.params.descricao,
-            id: this.$route.params.id
+            id: this.$route.params.id,
         };
     },
     methods: {
         salvar() {
+            const idCoordenador = localStorage.getItem('id');
+
             api({
                 method: "put",
                 url: "http://127.0.0.1:8000/api/editar-script/" + this.id,
                 data: {
                     nome: this.nome,
                     descricao: this.descricao,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.$router.push('/configuracoes')
@@ -83,7 +86,7 @@ export default {
     },
     mounted() {
         document.getElementById('configuracoes').classList.toggle('active');
-        (this.nome);
+
     },
 
 }

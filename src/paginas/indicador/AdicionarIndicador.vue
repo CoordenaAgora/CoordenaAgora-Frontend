@@ -68,18 +68,20 @@ export default {
     props: [],
     data() {
         return {
-            nome: null
+            nome: null,
 
         };
     },
     methods: {
         salvarIndicador(){
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/cadastrar-indicador",
                 data: {
                     nome: this.nome,
                     descricao: this.descricao,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.$router.push('/indicadores')
@@ -93,6 +95,7 @@ export default {
     },
     mounted() {
         document.getElementById('indicadores').classList.toggle('active');
+
     }
 
 }

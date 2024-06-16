@@ -68,17 +68,19 @@ export default {
         return {
             nome: this.$route.params.nome,
             descricao: this.$route.params.descricao,
-            id: this.$route.params.id
+            id: this.$route.params.id,
         };
     },
     methods: {
         salvarIndicador(){
+            const idCoordenador = localStorage.getItem('id');
             api({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/cadastrar-indicador",
+                method: "put",
+                url: "http://127.0.0.1:8000/api/editar-indicador/" + this.id,
                 data: {
                     nome: this.nome,
                     descricao: this.descricao,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.$router.push('/indicadores')

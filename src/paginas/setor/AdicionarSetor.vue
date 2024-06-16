@@ -83,24 +83,27 @@ export default {
             const idsPessoasSelecionadas = this.pessoasSelecionadas.map(pessoa => {
                 return pessoa.id
             })
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/cadastrar-setores",
                 data: {
                     nome: this.nome,
                     pessoas: idsPessoasSelecionadas,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.$router.push('/setores')
             }).catch(erro => {});
         },
         buscarPessoasPorNome(filtro) {
-            (filtro.query);
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/pessoas-por-nome",
                 params: {
-                    nome: filtro.query
+                    nome: filtro.query,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.pessoas = response.data

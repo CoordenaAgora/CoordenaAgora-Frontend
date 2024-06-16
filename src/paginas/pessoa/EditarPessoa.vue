@@ -76,12 +76,15 @@ export default {
     },
     methods: {
         salvarPessoa(){
+            const idCoordenador = localStorage.getItem('id');
+
             api({
                 method: "put",
                 url: "http://127.0.0.1:8000/api/editar-pessoa/" + this.id,
                 data: {
                     nome: this.nome,
                     email: this.email,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.$router.push('/pessoas')

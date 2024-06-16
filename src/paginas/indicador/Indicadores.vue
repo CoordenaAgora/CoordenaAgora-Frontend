@@ -58,7 +58,7 @@ export default {
             indicadores: [
 
             ],
-            pesquisa: null
+            pesquisa: null,
 
         };
     },
@@ -74,18 +74,31 @@ export default {
             })
         },
         deletar(item) {
+            const idCoordenador = localStorage.getItem('id');
+
             api({
-                method: "delete",
-                url: "http://127.0.0.1:8000/api/excluir-indicador/" + item.id
+                method: "put",
+                url: "http://127.0.0.1:8000/api/excluir-indicador/" + item.id,
+                data: {
+                    nome: item.nome,
+                    descricao: item.descricao,
+                    id_coordenador: idCoordenador,
+                    status: false
+                },
+                
             }).then(response => {
                 this.listar();
 
             }).catch(erro => {});
         },
         listar() {
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/indicadores",
+                params: {
+                    id_coordenador: idCoordenador
+                },
 
             }).then(response => {
                 this.indicadores = response.data;
@@ -102,6 +115,8 @@ export default {
     mounted() {
         document.getElementById('indicadores').classList.toggle('active');
         this.listar()
+        
+
     }
 
 }

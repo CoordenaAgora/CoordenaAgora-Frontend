@@ -55,18 +55,19 @@ export default {
     data() {
         return {
             nome: null,
-            descricao: null
-
+            descricao: null,
         };
     },
     methods: {
         salvar() {
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/cadastrar-script",
                 data: {
                     nome: this.nome,
                     descricao: this.descricao,
+                    id_coordenador: idCoordenador
                 },
             }).then(response => {
                 this.$router.push('/configuracoes')
