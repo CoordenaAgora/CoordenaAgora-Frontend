@@ -11,12 +11,12 @@
             <div class="flex flex-row mt-5">
                 <div class="flex flex-column mr-5">
                     <label id="titulo" for="">Data inicial</label>
-                    <Calendar v-model="inicial" dateFormat="dd/mm/yy" class="w-max" placeholder="dd/mm/aaaa" />
+                    <Calendar v-model="dataInicial" dateFormat="dd/mm/yy" class="w-max" placeholder="dd/mm/aaaa" />
                 </div>
 
                 <div class="flex flex-column mr-5">
                     <label id="titulo" for="">Data final</label>
-                    <Calendar v-model="final" dateFormat="dd/mm/yy" class="w-max" placeholder="dd/mm/aaaa" />
+                    <Calendar v-model="dataFinal" dateFormat="dd/mm/yy" class="w-max" placeholder="dd/mm/aaaa" />
                 </div>
 
                 <div class="flex flex-column">
@@ -58,8 +58,8 @@ export default {
     props: [],
     data() {
         return {
-            inicial: null,
-            final: null,
+            dataInicial: null,
+            dataFinal: null,
             indicadores: null,
             indicadoresSelecionados: null,
 
@@ -91,7 +91,7 @@ export default {
             }).then(response => {
 
             }).catch(erro => {
-                
+
             });
         }
 

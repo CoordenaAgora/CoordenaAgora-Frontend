@@ -56,7 +56,7 @@
                     <div class="tituloConversa">
                         Chatbot CoordenaAgora
                     </div>
-                    <div class="mensagens ">
+                    <div class="mensagens" ref="messages">
                         <div v-for="resposta in historico">
                             <div v-if="resposta.quem_enviou === 'bot' || resposta.quem_enviou === 'coordenador'"
                                 class="flex justify-content-start flex-wrap">
@@ -82,9 +82,11 @@
     </div>
 
     <Dialog v-model:visible="visible" modal header="" :style="{ width: '25rem' }">
-        <span class="p-text-secondary block mb-5" style="text-align: justify;">O chatbot atingiu o limite de interações para essa conversa, seu atendimento
-            será {{tipoRepasse}}. Você receberá um email com a solicitação, favor aguardar retorno da pessoa responsável em até 48 horas. </span>
-    </Dialog> 
+        <span class="p-text-secondary block mb-5" style="text-align: justify;">O chatbot atingiu o limite de interações
+            para essa conversa. Seu atendimento
+            será {{ tipoRepasse }}. Você receberá um email com a solicitação. Por favor, aguarde o retorno da pessoa
+            responsável dentro de 48 horas. </span>
+    </Dialog>
 </template>
 
 <script>
@@ -167,7 +169,7 @@ export default {
             }
 
             this.desabilitado = true;
-            // this.salvarMensagem(textoMensagem);
+            
 
             this.connection.send(JSON.stringify({
                 'message': textoMensagem,
@@ -180,6 +182,7 @@ export default {
                 this.verificarStatusBot(this.idAluno);
             } else {
                 this.mensagem = null
+                this.salvarMensagem(textoMensagem);
             }
         },
         selecionarConversa(conversa) {
@@ -197,7 +200,7 @@ export default {
                     id: conversa.id
                 },
             }).then(response => {
-                this.historico = response.data
+                this.historico = response.data;
             }).catch(erro => {
                 this.$toast.add({
                     severity: 'error',
@@ -339,6 +342,10 @@ export default {
 
             }
         },
+        scrollToBottom() {
+            const messagesContainer = this.$refs.messages;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        },
         verificarStatusBot(idAluno) {
             api({
                 method: "get",
@@ -385,15 +392,16 @@ export default {
                     'message': response.data.mensagem,
                     'quem_enviou': "bot"
                 }));
+                this.scrollToBottom();
                 // this.salvarMensagem(response.data.mensagem, "bot");
                 this.desabilitado = false;
                 this.mensagem = null;
-                if(response.data.tipo.tipo === "encaminhamento"){
+                if (response.data.tipo.tipo === "encaminhamento") {
                     this.tipoRepasse = "encaminhado para o setor " + response.data.tipo.setor
                 } else {
                     this.tipoRepasse = "encaminhado para agendamento com o coordenador"
                 }
-                if(response.data.mensagem == "A conversa foi finalizada"){
+                if (response.data.mensagem == "A conversa foi finalizada") {
                     this.visible = true;
                 }
             }).catch(erro => {
@@ -405,119 +413,8 @@ export default {
                 });
             });
         },
-        realizarEncaminhamento() {
-            this.encaminhamento = true;
-            this.tituloEncaminhamentoAgendamento = "Encaminhamento"
 
-            api({
-                method: "get",
-                url: "http://127.0.0.1:8000/api/visualizar-setores/",
 
-            }).then(response => {
-                this.setores = response.data;
-            }).catch(erro => { });
-
-        },
-        realizarAgendamento() {
-            this.agendamento = true;
-            this.tituloEncaminhamentoAgendamento = "Agendamento"
-        },
-        voltar() {
-            this.encaminhamento = false;
-            this.agendamento = false;
-            this.tituloEncaminhamentoAgendamento = "O que você gostaria de fazer?"
-            this.setorSelecionado = null;
-            this.duvida = null;
-        },
-        enviarEncaminhamento() {
-            if (!this.duvida) {
-                this.$toast.add({
-                    severity: 'error',
-                    summary: 'Campos não preenchidos',
-                    detail: "Não foi preenchido o campo dúvida",
-                    life: 3000
-                });
-                return;
-            }
-            if (!this.setorSelecionado) {
-                this.$toast.add({
-                    severity: 'error',
-                    summary: 'Campos não preenchidos',
-                    detail: "Não foi preenchido o campo setor",
-                    life: 3000
-                });
-                return;
-            }
-            this.carregando = true;
-            api({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/encaminhamento",
-                data: {
-                    id_aluno: this.idAluno,
-                    duvida: this.duvida,
-                    setor: this.setorSelecionado,
-                },
-            }).then(response => {
-                this.$toast.add({
-                    severity: 'success',
-                    summary: 'Encaminhamento',
-                    detail: response.data.mensagem,
-                    life: 3000
-                });
-                this.carregando = false;
-                this.visible = false;
-                this.agendamento = false;
-                this.encaminhamento = false;
-                this.tituloEncaminhamentoAgendamento = "O que você gostaria de fazer?"
-            }).catch(erro => {
-                this.$toast.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: erro.response.data.mensagem,
-                    life: 3000
-                });
-            });
-        },
-        enviarAgendamento() {
-            if (!this.duvida) {
-                this.$toast.add({
-                    severity: 'error',
-                    summary: 'Campos não preenchidos',
-                    detail: "Não foi preenchido o campo dúvida",
-                    life: 3000
-                });
-                return;
-            }
-            this.carregando = true;
-            api({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/agendamento",
-                data: {
-                    id_aluno: this.idAluno,
-                    duvida: this.duvida,
-                },
-            }).then(response => {
-                this.$toast.add({
-                    severity: 'success',
-                    summary: 'Agendamento',
-                    detail: response.data.mensagem,
-                    life: 3000
-                });
-                this.carregando = false;
-                this.visible = false;
-                this.agendamento = false;
-                this.encaminhamento = false;
-                this.tituloEncaminhamentoAgendamento = "O que você gostaria de fazer?"
-                this.duvida = null;
-            }).catch(erro => {
-                this.$toast.add({
-                    severity: 'error',
-                    summary: 'Erro',
-                    detail: erro.response.data.mensagem,
-                    life: 3000
-                });
-            });
-        },
     },
     computed: {
 
@@ -537,7 +434,6 @@ export default {
         }
     },
     destroyed() {
-        alert()
         this.connection.onclose = (event) => {
             console.log("Conexão com o WebSocket fechada", event);
         }
