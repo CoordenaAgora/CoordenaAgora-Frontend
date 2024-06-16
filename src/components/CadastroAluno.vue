@@ -60,6 +60,9 @@
                 </div>
 
                 <Button class="w-full mt-4 botao-entrar" label="Cadastrar" @click="cadastrarAluno" />
+                <router-link to="/">
+                    <Button class="w-full mt-4 botao-voltar" label="Voltar"  />
+                </router-link>
 
             </template>
         </Card>
@@ -180,6 +183,12 @@ export default {
     box-shadow: 0px 10px 40px -12px #45A8BF;
     background-color: #45A8BF;
     border-color: #45A8BF;
+}
+
+.botao-voltar {
+    box-shadow: 0px 10px 40px -12px #455c6154;
+    background-color: #455c6154;
+    border-color: #455c6154;
 }
 
 .acoes-senha {

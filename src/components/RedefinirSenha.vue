@@ -9,6 +9,9 @@
             alterar sua senha</label>
         <InputText class="email" v-model="email" placeholder="Digite seu e-mail..." v-on:keyup.enter="enviar" />
         <Button class="botao-enviar" label="Enviar" @click="enviar" />
+        <router-link to="/">
+            <Button class="voltar" label="Voltar"  />
+        </router-link>
     </div>
 
     <div v-if="inputCodigo" class="flex flex-column justify-content-center m-6">
@@ -154,7 +157,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .botao-enviar {
     box-shadow: 0px 10px 40px -12px #45A8BF;
     background-color: #45A8BF;
@@ -164,6 +167,18 @@ export default {
     justify-content: center;
     margin-left: 25%;
     margin-top: 2rem;
+}
+
+.voltar {
+    box-shadow: 0px 10px 40px -12px #455c6154;
+    background-color: #455c6154;
+    border-color: #455c6154;
+    width: 50%;
+    justify-content: center;
+    margin-left: 25%;
+    margin-top: 2rem;
+    text-decoration: none;
+    text-decoration-line: none;
 }
 
 .titulo {
