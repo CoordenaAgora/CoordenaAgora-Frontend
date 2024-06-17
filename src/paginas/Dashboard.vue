@@ -100,23 +100,7 @@ export default {
     data() {
         return {
             informacoes: [
-                {
-                    titulo: "Número de conversas",
-                    corpo: "733"
-                },
-                {
-                    titulo: "Número de setores cadastrados",
-                    corpo: "02"
-                },
-                {
-                    titulo: "Número de alunos cadastradas",
-                    corpo: "32"
-                },
-                {
-                    titulo: "Alunos vieram falar mais sobre:",
-                    categoria: "Validação de horas complementares",
-                    corpo: "45"
-                },
+                
 
             ],
             setores: [],
@@ -154,6 +138,43 @@ export default {
                 this.setores = response.data;
                 this.setores = this.setores.slice(0, 5);
             }).catch(erro => {});
+        },
+        listarInformacoes(){
+            const idCoordenador = localStorage.getItem('id');
+            const idCurso = localStorage.getItem('curso');
+            const idInstituicao = localStorage.getItem('instituicao');
+            api({
+                method: "get",
+                url: "http://127.0.0.1:8000/api/dashboard",
+                params: {
+                    id_coordenador: idCoordenador,
+                    curso: idCurso,
+                    instituicao: idInstituicao
+                },
+
+            }).then(response => {
+                console.log(response.data);
+                this.informacoes = [
+                {
+                    titulo: "Número de conversas",
+                    corpo: response.data.qtde_conversas
+                },
+                {
+                    titulo: "Número de setores cadastrados",
+                    corpo: response.data.qtde_setores
+                },
+                {
+                    titulo: "Número de alunos cadastradas",
+                    corpo: response.data.qtde_alunos
+                },
+                {
+                    titulo: "Alunos vieram falar mais sobre:",
+                    categoria: "Validação de horas complementares",
+                    corpo: "45"
+                },
+
+            ]
+            }).catch(erro => {});
         }
 
 
@@ -167,6 +188,7 @@ export default {
         document.getElementById('inicio').classList.toggle('active');
         this.listarPessoas();
         this.listarSetores();
+        this.listarInformacoes();
     }
 
 }
