@@ -16,11 +16,13 @@
             <label for="firstname1">Nome do script</label>
             <InputText type="text" v-model="nome" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
             </InputText>
+            <small v-if="!nome && enviado" style="color: red">O campo é obrigatório</small>
         </div>
         <div class="field">
             <label for="lastname1">Descrição do script</label>
             <Textarea v-model="descricao" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full" rows="5" cols="30" />
             </div>
+            <small v-if="!nome && enviado" style="color: red">O campo é obrigatório</small>
         </div>
     </div>
 </template>
@@ -61,11 +63,16 @@ export default {
             nome: this.$route.params.nome,
             descricao: this.$route.params.descricao,
             id: this.$route.params.id,
+            enviado: false,
         };
     },
     methods: {
         salvar() {
             const idCoordenador = localStorage.getItem('id');
+            this.enviado = true
+            if(!this.nome || !this.descricao){
+                return
+            }
 
             api({
                 method: "put",

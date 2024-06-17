@@ -1,75 +1,89 @@
 <template>
-<Menubar>
-    <template #start>
-        <img src="/logo-e-nome.png" height="80px" style="margin-left: 15px;" alt="">
-    </template>
-</Menubar>
+    <Menubar>
+        <template #start>
+            <img src="/logo-e-nome.png" height="80px" style="margin-left: 15px;" alt="">
+        </template>
+    </Menubar>
 
-<div class="flex justify-content-center">
-    <div id="container">
-        <Card class="card">
-            <template #title>Bem vindo!</template>
-            <template #content>
-                <h2 class="flex justify-content-center mb-2">Cadastro do aluno</h2>
+    <div class="flex justify-content-center">
+        <div id="container">
+            <Card class="card">
+                <template #title>Bem vindo!</template>
+                <template #content>
+                    <h2 class="flex justify-content-center mb-2">Cadastro do aluno</h2>
 
-                <div class="formgrid grid">
-                    <div class="field col">
+                    <div class="formgrid grid">
                         <div class="field col">
-                            <label>Email</label>
-                            <div>
-                                <input type="text" style="width: 25rem; height: 2.5rem;"  v-model="email" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary "  placeholder="Digite o email...">
+                            <div class="field col">
+                                <label>Email</label>
+                                <div>
+                                    <input type="text" style="width: 25rem; height: 2.5rem;" v-model="email"
+                                        class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary "
+                                        placeholder="Digite o email...">
+                                </div>
+                                <small v-if="!email && enviado" style="color: red">O campo é obrigatório</small>
                             </div>
+
+                        </div>
+
+                        <div class="field col">
+                            <label>Senha</label>
+                            <div>
+                                <Password v-model="senha" inputId="senha" id="senha"
+                                    inputStyle="width: 25rem; height: 2.5rem;" :feedback="false" toggleMask
+                                    placeholder="Digite a senha..." />
+                            </div>
+                            <small v-if="!senha && enviado" style="color: red">O campo é obrigatório</small>
                         </div>
 
                     </div>
 
-                    <div class="field col">
-                        <label>Senha</label>
-                        <div>
-                            <Password v-model="senha" inputId="senha" id="senha" inputStyle="width: 25rem; height: 2.5rem;" :feedback="false" toggleMask placeholder="Digite a senha..." />
+                    <div class="formgrid grid" style="margin-left: 0.05rem">
+                        <div class="field col">
+                            <label for="lastname2">Instituição</label>
+                            <div>
+                                <AutoComplete v-model="instituicao" inputStyle="width: 25rem; height: 2.5rem;"
+                                    optionLabel="nome" :suggestions="instituicoes" @complete="buscarInstituicoesPorNome"
+                                    completeOnFocus inputId="autocomplete" placeholder="Selecione a Instituição..." />
+                            </div>
+                            <small v-if="!instituicao && enviado" style="color: red">O campo é obrigatório</small>
                         </div>
+
+                        <div class="field col">
+                            <label for="lastname2">Curso</label>
+                            <div>
+                                <AutoComplete v-model="curso" style="height: 42px;" optionLabel="nome"
+                                    :suggestions="cursos" @complete="buscarCursosPorNome" completeOnFocus
+                                    inputStyle="width: 25rem; height: 2.5rem;" placeholder="Selecione o curso..." />
+                            </div>
+                            <small v-if="!curso && enviado" style="color: red">O campo é obrigatório</small>
+                        </div>
+
                     </div>
 
-                </div>
-
-                <div class="formgrid grid" style="margin-left: 0.05rem">
-                    <div class="field col">
-                        <label for="lastname2">Instituição</label>
-                        <div>
-                            <AutoComplete v-model="instituicao" inputStyle="width: 25rem; height: 2.5rem;" optionLabel="nome" :suggestions="instituicoes" @complete="buscarInstituicoesPorNome" completeOnFocus inputId="autocomplete"  placeholder="Selecione a Instituição..."/>
+                    <div class="formgrid grid" style="margin-left: 0.05rem">
+                        <div class="field col">
+                            <label>Nome</label>
+                            <div>
+                                <InputText v-model="nome" placeholder="Digite o nome completo do aluno..."
+                                    style="width: 25rem; height: 2.5rem;" />
+                            </div>
+                            <small v-if="!nome && enviado" style="color: red">O campo é obrigatório</small>
                         </div>
+
                     </div>
 
-                    <div class="field col">
-                        <label for="lastname2">Curso</label>
-                        <div>
-                            <AutoComplete v-model="curso" style="height: 42px;" optionLabel="nome" :suggestions="cursos" @complete="buscarCursosPorNome" completeOnFocus inputStyle="width: 25rem; height: 2.5rem;"  placeholder="Selecione o curso..."/>
-                        </div>
-                    </div>
+                    <Button class="w-full mt-4 botao-entrar" label="Cadastrar" @click="cadastrarAluno" />
+                    <router-link to="/">
+                        <Button class="w-full mt-4 botao-voltar" label="Voltar" />
+                    </router-link>
 
-                </div>
+                </template>
+            </Card>
+        </div>
 
-                <div class="formgrid grid" style="margin-left: 0.05rem">
-                    <div class="field col">
-                        <label>Nome</label>
-                        <div>
-                            <InputText v-model="nome" placeholder="Digite o nome completo do aluno..." style="width: 25rem; height: 2.5rem;" />
-                        </div>
-                    </div>
-
-                </div>
-
-                <Button class="w-full mt-4 botao-entrar" label="Cadastrar" @click="cadastrarAluno" />
-                <router-link to="/">
-                    <Button class="w-full mt-4 botao-voltar" label="Voltar"  />
-                </router-link>
-
-            </template>
-        </Card>
     </div>
-
-</div>
-<Toast />
+    <Toast />
 </template>
 
 <script>
@@ -83,6 +97,7 @@ import api from "@/plugins/axios";
 import Menubar from 'primevue/menubar';
 import AutoComplete from 'primevue/autocomplete';
 import Toast from 'primevue/toast';
+import { computed } from "vue";
 
 export default {
     components: {
@@ -104,11 +119,17 @@ export default {
             curso: null,
             email: null,
             instituicoes: null,
-            cursos: null
+            cursos: null,
+            invalido: false,
+            enviado: false
         };
     },
     methods: {
         cadastrarAluno() {
+            if (!this.nome || !this.curso || !this.instituicao || !this.senha || !this.email) {
+                this.enviado = true;
+                return
+            }
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/cadastrar-aluno",
@@ -141,7 +162,7 @@ export default {
             }).then(response => {
                 this.instituicoes = response.data
 
-            }).catch(erro => {});
+            }).catch(erro => { });
         },
         buscarCursosPorNome(filtro) {
             api({
@@ -153,16 +174,19 @@ export default {
             }).then(response => {
                 this.cursos = response.data
 
-            }).catch(erro => {});
+            }).catch(erro => { });
         }
     },
-    mounted() {},
+    mounted() { },
+    computed: {
+        
+
+    },
 }
 </script>
 
 <style scoped>
-
-#container{
+#container {
     width: 100%;
 
 }
@@ -207,13 +231,22 @@ export default {
     display: flex;
 }
 
-#senha{
+#senha {
     height: 2.5rem;
 }
 
-#autocomplete{
+#autocomplete {
     height: 2.5rem;
     width: 25rem;
+}
+
+.tamanho-campo {
+    width: 25rem;
+    height: 2.5rem;
+}
+
+.invalido {
+    border-color: red
 }
 
 /**

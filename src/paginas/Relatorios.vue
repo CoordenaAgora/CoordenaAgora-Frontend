@@ -12,17 +12,21 @@
                 <div class="flex flex-column mr-5">
                     <label id="titulo" for="">Data inicial</label>
                     <Calendar v-model="dataInicial" dateFormat="dd/mm/yy" class="w-max" placeholder="dd/mm/aaaa" />
+                    <small v-if="!dataInicial && enviado" style="color: red;  margin-top:1rem">O campo é obrigatório</small>
+
                 </div>
 
                 <div class="flex flex-column mr-5">
                     <label id="titulo" for="">Data final</label>
                     <Calendar v-model="dataFinal" dateFormat="dd/mm/yy" class="w-max" placeholder="dd/mm/aaaa" />
+                    <small v-if="!dataFinal && enviado" style="color: red; margin-top:1rem">O campo é obrigatório</small>
                 </div>
 
                 <div class="flex flex-column">
                     <label id="titulo" for="">Indicadores</label>
                     <AutoComplete v-model="indicadoresSelecionados" multiple optionLabel="nome" :suggestions="indicadores"
                         @complete="buscarIndicadoresPorNome" completeOnFocus />
+                    <small v-if="!indicadoresSelecionados || indicadoresSelecionados.length == 0 && enviado" style="color: red">O campo é obrigatório</small>
                 </div>
             </div>
         </div>
@@ -61,7 +65,8 @@ export default {
             dataInicial: null,
             dataFinal: null,
             indicadores: null,
-            indicadoresSelecionados: null,
+            indicadoresSelecionados: [],
+            enviado: false
 
         };
     },
@@ -81,6 +86,10 @@ export default {
         },
         gerarRelatorio(){
             const idCoordenador = localStorage.getItem('id');
+            this.enviado = true
+            if(!this.dataInicial || !this.dataFinal || this.indicadoresSelecionados.length == 0){
+                return
+            }
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/relatorio",

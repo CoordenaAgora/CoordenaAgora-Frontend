@@ -17,12 +17,16 @@
                 <InputText type="text" v-model="nome"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
                 </InputText>
+                <small v-if="!nome && enviado" style="color: red">O campo é obrigatório</small>
+
             </div>
             <div class="field">
                 <label for="lastname1">E-mail</label>
                 <InputText v-model="email"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                     rows="5" cols="30" />
+                <small v-if="!email && enviado" style="color: red">O campo é obrigatório</small>
+
             </div>
         </div>
     </div>
@@ -70,14 +74,18 @@ export default {
         return {
             nome: this.$route.params.nome,
             email: this.$route.params.email,
-            id: this.$route.params.id
+            id: this.$route.params.id,
+            enviado: false
 
         };
     },
     methods: {
         salvarPessoa(){
             const idCoordenador = localStorage.getItem('id');
-
+            this.enviado = true
+            if(!this.nome || !this.email){
+                return
+            }
             api({
                 method: "put",
                 url: "http://127.0.0.1:8000/api/editar-pessoa/" + this.id,

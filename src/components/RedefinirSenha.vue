@@ -8,6 +8,7 @@
         <label class="subtitulo" for="">Informe seu email cadastrado e enviaremos um código de 8 dígitos para
             alterar sua senha</label>
         <InputText class="email" v-model="email" placeholder="Digite seu e-mail..." v-on:keyup.enter="enviar" />
+        <small v-if="!email && enviadoEmail" style="color: red" class="email">O campo é obrigatório</small>
         <Button class="botao-enviar" label="Enviar" @click="enviar" />
         <router-link to="/">
             <Button class="voltar" label="Voltar"  />
@@ -18,6 +19,7 @@
         <label class="titulo">Redefinir senha</label>
         <label class="subtitulo" for="">Digite o código recebido através do e-mail</label>
         <InputText class="email" v-model="codigoDigitado" placeholder="Digite o código..." v-on:keyup.enter="verificar" />
+        <small v-if="!codigoDigitado && enviadoCodigo" style="color: red" class="email">O campo é obrigatório</small>
         <label class="flex justify-content-center p-error mt-1" v-if="codigoIncorreto">Código incorreto</label>
         <Button class="botao-enviar" label="Verificar" @click="verificar" />
     </div>
@@ -30,12 +32,14 @@
                 <div>
                     <Password v-model="senha" :feedback="false" toggleMask placeholder="Digite a nova senha..."  inputStyle="width: 25rem; height: 2.5rem;" />
                 </div>
+                <small v-if="!senha && enviadoSenha" style="color: red" >O campo é obrigatório</small>
             </div>
             <div class="field">
                 <label for="lastname1">Confirmar senha</label>
                 <div>
                     <Password v-model="confirmarSenha" :feedback="false" toggleMask placeholder="Confirme sua senha..."  inputStyle="width: 25rem; height: 2.5rem;" v-on:keyup.enter="alterarSenha"/>
                 </div>
+                <small v-if="!confirmarSenha && enviadoSenha" style="color: red">O campo é obrigatório</small>
             </div>
             
         </div>
@@ -79,13 +83,20 @@ export default {
             codigoDigitado: null,
             confirmarSenha: null,
             codigoIncorreto: false,
-            visivel: false
+            visivel: false,
+            enviadoEmail: false,
+            enviadoCodigo: false,
+            enviadoSenha: false
 
 
         };
     },
     methods: {
         enviar() {
+            this.enviadoEmail = true;
+            if(!this.email){
+                return;
+            }
             this.visivel = true;
             api({
                 method: "post",
@@ -109,6 +120,10 @@ export default {
             });
         },
         verificar() {
+            this.enviadoCodigo = true
+            if(!this.codigoDigitado){
+                return
+            }
             if (this.codigoDigitado === this.codigoVerificacao) {
                 this.inputCodigo = false;
                 this.inputNovaSenha = true;
@@ -118,7 +133,10 @@ export default {
             }
         },
         alterarSenha() {
-            console.log("teste");
+            this.enviadoSenha = true
+            if(!this.senha || !this.confirmarSenha){
+                return
+            }
             if (this.validarSenhasIguais) {
                 api({
                     method: "put",

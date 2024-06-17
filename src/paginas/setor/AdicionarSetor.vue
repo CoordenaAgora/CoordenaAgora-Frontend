@@ -15,10 +15,13 @@
             <label for="firstname1">Nome do setor</label>
             <InputText type="text" v-model="nome" class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full">
             </InputText>
+            <small v-if="!nome && enviado" style="color: red">O campo é obrigatório</small>
+
         </div>
         <div class="field">
             <label for="lastname1">Adicionar pessoas nesse setor</label>
             <AutoComplete v-model="pessoasSelecionadas" class="surface-overlay p-2 w-full" multiple :suggestions="pessoas" optionLabel="nome" @complete="buscarPessoasPorNome" completeOnFocus/>
+            <small v-if="!pessoasSelecionadas || pessoasSelecionadas.length == 0 && enviado" style="color: red">O campo é obrigatório</small>
             <div class="flex flex-wrap gap-3">
                 <div id="card" v-for="(item, index) in pessoasSelecionadas" :key="index">
                     <label>{{ item.nome }}</label>
@@ -67,7 +70,8 @@ export default {
         return {
             nome: null,
             pessoas: null,
-            pessoasSelecionadas: []
+            pessoasSelecionadas: [],
+            enviado: false
 
         };
     },
@@ -84,6 +88,10 @@ export default {
                 return pessoa.id
             })
             const idCoordenador = localStorage.getItem('id');
+            this.enviado = true
+            if(this.pessoasSelecionadas.length == 0 || !this.nome){
+                return
+            }
             api({
                 method: "post",
                 url: "http://127.0.0.1:8000/api/cadastrar-setores",

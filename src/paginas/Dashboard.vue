@@ -15,7 +15,7 @@
 
             <div class="flex justify-content-between">
                 <label id="subtitulo" class="mt-6">Setores</label>
-                <RouterLink id="ver-todos" to="/setores" >Ver todos</RouterLink>
+                <RouterLink id="ver-todos" to="/setores">Ver todos</RouterLink>
                 <!-- <label id="ver-todos">Ver todos (as)</label> -->
             </div>
             <div class="flex flex-wrap gap-3">
@@ -45,7 +45,7 @@
 
             <div class="flex justify-content-between">
                 <label id="subtitulo" class="mt-6">Pessoas</label>
-                <RouterLink id="ver-todos" to="/pessoas" >Ver todos</RouterLink>
+                <RouterLink id="ver-todos" to="/pessoas">Ver todos</RouterLink>
             </div>
 
             <div class="flex flex-wrap gap-3 mb-6">
@@ -100,7 +100,7 @@ export default {
     data() {
         return {
             informacoes: [
-                
+
 
             ],
             setores: [],
@@ -122,7 +122,7 @@ export default {
             }).then(response => {
                 this.pessoas = response.data;
                 this.pessoas = this.pessoas.slice(0, 5);
-            }).catch(erro => {});
+            }).catch(erro => { });
         },
         listarSetores() {
             const idCoordenador = localStorage.getItem('id');
@@ -137,9 +137,9 @@ export default {
             }).then(response => {
                 this.setores = response.data;
                 this.setores = this.setores.slice(0, 5);
-            }).catch(erro => {});
+            }).catch(erro => { });
         },
-        listarInformacoes(){
+        listarInformacoes() {
             const idCoordenador = localStorage.getItem('id');
             const idCurso = localStorage.getItem('curso');
             const idInstituicao = localStorage.getItem('instituicao');
@@ -153,28 +153,44 @@ export default {
                 },
 
             }).then(response => {
-                console.log(response.data);
-                this.informacoes = [
-                {
-                    titulo: "Número de conversas",
-                    corpo: response.data.qtde_conversas
-                },
-                {
-                    titulo: "Número de setores cadastrados",
-                    corpo: response.data.qtde_setores
-                },
-                {
-                    titulo: "Número de alunos cadastradas",
-                    corpo: response.data.qtde_alunos
-                },
-                {
-                    titulo: "Alunos vieram falar mais sobre:",
-                    categoria: "Validação de horas complementares",
-                    corpo: "45"
-                },
+                if (response.data.maior_indicador.count) {
+                    this.informacoes = [
+                        {
+                            titulo: "Número de conversas",
+                            corpo: response.data.qtde_conversas
+                        },
+                        {
+                            titulo: "Número de setores cadastrados",
+                            corpo: response.data.qtde_setores
+                        },
+                        {
+                            titulo: "Número de alunos cadastradas",
+                            corpo: response.data.qtde_alunos
+                        },
+                        {
+                            titulo: "Alunos vieram falar mais sobre:",
+                            categoria: response.data.maior_indicador.nome_indicador ? response.data.maior_indicador.nome_indicador : "Sem informação",
+                            corpo: response.data.maior_indicador.count ? response.data.maior_indicador.count : 0
+                        }
+                    ]
+                } else {
+                    this.informacoes = [
+                        {
+                            titulo: "Número de conversas",
+                            corpo: response.data.qtde_conversas
+                        },
+                        {
+                            titulo: "Número de setores cadastrados",
+                            corpo: response.data.qtde_setores
+                        },
+                        {
+                            titulo: "Número de alunos cadastradas",
+                            corpo: response.data.qtde_alunos
+                        },
+                    ]
+                }
 
-            ]
-            }).catch(erro => {});
+            }).catch(erro => { });
         }
 
 
@@ -253,7 +269,7 @@ export default {
     font-family: 'Poppins';
 }
 
-#ver-todos{
+#ver-todos {
     font-family: 'Poppins';
     font-style: normal;
     font-weight: 900;
@@ -261,7 +277,7 @@ export default {
     line-height: 21px;
     letter-spacing: 0.13px;
     text-decoration-line: underline;
-    margin-top: 3rem;    
+    margin-top: 3rem;
     margin-right: 10px;
     color: #858585;
     cursor: pointer;
