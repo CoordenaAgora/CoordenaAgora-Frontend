@@ -136,11 +136,7 @@ export default {
             },
             mensagem: "",
             historico: [],
-            conversas: [{
-                id: 1,
-                nome: "Aluno 1",
-                dataHora: "14:35"
-            },],
+            conversas: [],
             conversaSelecionada: "",
             desabilitado: false,
             indicadoresEncontrados: ["teste"],
@@ -263,9 +259,13 @@ export default {
             });
         },
         listarTodosAlunos() {
+            const idCoordenador = localStorage.getItem('id');
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/listar-todos-alunos",
+                params: {
+                    id_coordenador: idCoordenador
+                },
             }).then(response => {
                 //ver depois como pegar a hora
                 console.log(response);

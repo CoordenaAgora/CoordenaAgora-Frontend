@@ -84,27 +84,34 @@ export default {
                 this.indicadores = response.data
             }).catch(erro => {});
         },
-        gerarRelatorio(){
-            const idCoordenador = localStorage.getItem('id');
-            this.enviado = true
-            if(!this.dataInicial || !this.dataFinal || this.indicadoresSelecionados.length == 0){
-                return
-            }
-            api({
-                method: "post",
-                url: "http://127.0.0.1:8000/api/relatorio",
-                data: {
-                    data_inicial: this.dataInicial,
-                    data_final: this.dataFinal,
-                    indicadores: this.indicadoresSelecionados,
-                    id_coordenador: idCoordenador
-                },
-            }).then(response => {
-
-            }).catch(erro => {
-
-            });
+        gerarRelatorio() {
+        const idCoordenador = localStorage.getItem('id');
+        this.enviado = true;
+        if (!this.dataInicial || !this.dataFinal || this.indicadoresSelecionados.length == 0) {
+            return;
         }
+        api({
+            method: "post",
+            url: "http://127.0.0.1:8000/api/gerar-relatorio",
+            data: {
+                data_inicial: this.dataInicial,
+                data_final: this.dataFinal,
+                indicadores: this.indicadoresSelecionados,
+                id_coordenador: idCoordenador
+            },
+            responseType: 'blob' // Adicione isto para tratar a resposta como um blob
+        }).then(response => {
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'relatorio.pdf'); // Nome do arquivo PDF
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link); // Remova o link após o download
+        }).catch(error => {
+            console.error('Erro ao gerar relatório:', error);
+        });
+    }
 
 
 
