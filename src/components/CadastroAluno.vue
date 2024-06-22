@@ -54,7 +54,7 @@
                             <div>
                                 <AutoComplete v-model="curso" style="height: 42px;" optionLabel="nome"
                                     :suggestions="cursos" @complete="buscarCursosPorNome" completeOnFocus
-                                    inputStyle="width: 25rem; height: 2.5rem;" placeholder="Selecione o curso..." />
+                                    inputStyle="width: 25rem; height: 2.5rem;" placeholder="Selecione o curso..." :disabled="!instituicao" />
                             </div>
                             <small v-if="!curso && enviado" style="color: red">O campo é obrigatório</small>
                         </div>
@@ -168,8 +168,9 @@ export default {
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/cursos-por-nome",
-                data: {
-                    curso: filtro.query
+                params: {
+                    curso: filtro.query,
+                    instituicao: this.instituicao.id
                 },
             }).then(response => {
                 this.cursos = response.data

@@ -82,6 +82,7 @@ export default {
                 },
             }).then(response => {
                 this.indicadores = response.data
+                this.indicadores.push({id: 0, nome:"Sem classificação"})
             }).catch(erro => {});
         },
         gerarRelatorio() {
