@@ -22,6 +22,7 @@
                                         placeholder="Digite o email...">
                                 </div>
                                 <small v-if="!email && enviado" style="color: red">O campo é obrigatório</small>
+                                <small v-if="emailInvalido" style="color: red">Email inválido</small>
                             </div>
 
                         </div>
@@ -121,14 +122,19 @@ export default {
             instituicoes: null,
             cursos: null,
             invalido: false,
-            enviado: false
+            enviado: false,
+            emailInvalido: false
         };
     },
     methods: {
         cadastrarAluno() {
+            this.validateEmail();
             if (!this.nome || !this.curso || !this.instituicao || !this.senha || !this.email) {
                 this.enviado = true;
                 return
+            }
+            if(this.emailInvalido){
+                return;
             }
             api({
                 method: "post",
@@ -151,6 +157,14 @@ export default {
                     life: 3000
                 });
             });
+        },
+        validateEmail() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(this.email)) {
+                this.emailInvalido = true;
+            } else {
+                this.emailInvalido = false;
+            }
         },
         buscarInstituicoesPorNome(filtro) {
             api({

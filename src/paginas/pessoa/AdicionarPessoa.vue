@@ -24,7 +24,8 @@
                 <InputText v-model="email"
                     class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary w-full"
                     rows="5" cols="30" />
-                    <small v-if="!email && enviado" style="color: red">O campo é obrigatório</small>
+                    <small v-if="!email && enviado" style="color: red">O campo é obrigatório</small><br>
+                    <small v-if="emailInvalido" style="color: red">Email inválido</small>
             </div>
         </div>
     </div>
@@ -72,15 +73,17 @@ export default {
         return {
             nome: null,
             email: null,
-            enviado: false
+            enviado: false,
+            emailInvalido: false
 
         };
     },
     methods: {
         salvarPessoa(){
+            this.validateEmail();
             const idCoordenador = localStorage.getItem('id');
             this.enviado = true
-            if(!this.nome || !this.email){
+            if(!this.nome || !this.email || this.emailInvalido){
                 return
             }
             api({
@@ -94,8 +97,15 @@ export default {
             }).then(response => {
                 this.$router.push('/pessoas')
             }).catch(erro => {});
-        }
-        
+        },
+        validateEmail() {
+            const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailPattern.test(this.email)) {
+                this.emailInvalido = true;
+            } else {
+                this.emailInvalido = false;
+            }
+        },        
     },
     computed: {
 
