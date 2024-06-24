@@ -21,7 +21,7 @@
                                         class="text-base text-color surface-overlay p-2 border-1 border-solid surface-border border-round appearance-none outline-none focus:border-primary "
                                         placeholder="Digite o email...">
                                 </div>
-                                <small v-if="!email && enviado" style="color: red">O campo é obrigatório</small>
+                                <small v-if="!email && enviado" style="color: red">O campo é obrigatório</small><br>
                                 <small v-if="emailInvalido" style="color: red">Email inválido</small>
                             </div>
 
@@ -167,6 +167,7 @@ export default {
             }
         },
         buscarInstituicoesPorNome(filtro) {
+            this.curso = null;
             api({
                 method: "get",
                 url: "http://127.0.0.1:8000/api/instituicoes-por-nome",
